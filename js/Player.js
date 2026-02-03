@@ -7,10 +7,10 @@ class Player {
     this.radius = levelSystem.getCurrentSize();
   }
 
-  // 크기에 반비례하는 속도 계산 (작을수록 빠름, 플레이어는 조금 더 빠름)
+  // 크기에 반비례하는 속도 계산 (작을수록 빠름, 플레이어는 속도 감소폭이 적고 더 빠름)
   getSpeed() {
-    // 공식: baseSpeed * (maxSize / currentSize) ^ speedVariation * playerBoost
-    const speedMultiplier = Math.pow(CONFIG.MAX_SIZE / this.radius, CONFIG.SPEED_VARIATION);
+    // 공식: baseSpeed * (maxSize / currentSize) ^ playerSpeedVariation * playerBoost
+    const speedMultiplier = Math.pow(CONFIG.MAX_SIZE / this.radius, CONFIG.PLAYER_SPEED_VARIATION);
     return CONFIG.BASE_SPEED * speedMultiplier * CONFIG.PLAYER_SPEED_BOOST;
   }
 

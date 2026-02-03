@@ -77,6 +77,13 @@ class Renderer {
           size,
           size
         );
+
+        // 이미지 위에 원형 테두리 추가
+        this.ctx.beginPath();
+        this.ctx.arc(entity.x, entity.y, entity.radius, 0, Math.PI * 2);
+        this.ctx.strokeStyle = color;
+        this.ctx.lineWidth = 3;
+        this.ctx.stroke();
       } else {
         // 이미지 로드 실패 시 원형으로 폴백
         this.drawCircle(entity.x, entity.y, entity.radius, color);
@@ -174,7 +181,7 @@ class Renderer {
     this.drawBackground();
 
     // 게임 상태에 따라 렌더링
-    if (gameState === CONFIG.STATE.PLAYING) {
+    if (gameState === CONFIG.STATE.PLAYING || gameState === CONFIG.STATE.VICTORY_ANIMATION) {
       // 먹이 그리기
       preyArray.forEach(prey => {
         this.drawEntity(prey, CONFIG.PREY_COLOR);

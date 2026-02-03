@@ -24,7 +24,11 @@ const game = {
   elapsedTime: 0,
 
   // 디버그
-  godMode: false
+  godMode: false,
+
+  // 승리 애니메이션
+  victoryAnimationStartTime: null,
+  victoryAnimationDuration: 3000 // 3초 동안 확대
 };
 
 // 게임 초기화
@@ -81,10 +85,11 @@ function init() {
     // 먹이 제거 및 리스폰
     game.entityManager.removePrey(prey, game.player);
 
-    // 최종 레벨 도달 시 승리
+    // 최종 레벨 도달 시 승리 애니메이션 시작
     if (result.reachedMax) {
-      game.state = CONFIG.STATE.VICTORY;
-      console.log('승리! 호인 달성!');
+      game.state = CONFIG.STATE.VICTORY_ANIMATION;
+      game.victoryAnimationStartTime = Date.now();
+      console.log('승리! 호인 달성! 애니메이션 시작');
     }
   };
 
@@ -204,6 +209,21 @@ function update(deltaTime) {
       game.entityManager.predatorArray,
       game.godMode
     );
+  } else if (game.state === CONFIG.STATE.VICTORY_ANIMATION) {
+    // 승리 애니메이션 업데이트
+    const elapsed = Date.now() - game.victoryAnimationStartTime;
+    const progress = Math.min(elapsed / game.victoryAnimationDuration, 1);
+
+    // 플레이어 크기를 화면 대각선 길이까지 확대
+    const targetSize = Math.sqrt(CONFIG.CANVAS_WIDTH ** 2 + CONFIG.CANVAS_HEIGHT ** 2);
+    const initialSize = game.levelSystem.getCurrentSize();
+    game.player.radius = initialSize + (targetSize - initialSize) * progress;
+
+    // 애니메이션 완료 시 승리 화면으로 전환
+    if (progress >= 1) {
+      game.state = CONFIG.STATE.VICTORY;
+      console.log('승리 애니메이션 완료');
+    }
   }
 }
 
@@ -226,6 +246,17 @@ function render() {
 
     // HUD 그리기
     game.ui.drawHUD(game.levelSystem, game.elapsedTime, game.godMode);
+  } else if (game.state === CONFIG.STATE.VICTORY_ANIMATION) {
+    // 승리 애니메이션 화면
+    game.renderer.renderFrame(
+      game.player,
+      game.entityManager.preyArray,
+      game.entityManager.predatorArray,
+      game.levelSystem,
+      game.elapsedTime,
+      game.state,
+      game.godMode
+    );
   } else if (game.state === CONFIG.STATE.GAMEOVER) {
     // 게임 오버 화면
     game.ui.drawGameOverScreen(game.levelSystem, game.elapsedTime);
