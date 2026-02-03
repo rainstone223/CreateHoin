@@ -22,10 +22,11 @@ const CONFIG = {
   MAX_SIZE: 50, // 최대 크기 (속도 계산용)
   SPEED_VARIATION: 0.4, // 속도 변화 지수 (큰 개체일수록 더 느리게)
   PLAYER_SPEED_BOOST: 1.25, // 플레이어 속도 부스트 (같은 크기 대비 25% 빠름)
+  PREDATOR_SPEED_PENALTY: 0.95, // 포식자 속도 패널티 (5% 감소)
   PREY_COUNT_MIN: 7,
   PREY_COUNT_MAX: 10,
-  PREDATOR_COUNT_MIN: 3,
-  PREDATOR_COUNT_MAX: 5,
+  PREDATOR_COUNT_MIN: 4,
+  PREDATOR_COUNT_MAX: 4,
   XP_PER_PREY: 10,
 
   // AI 행동 설정

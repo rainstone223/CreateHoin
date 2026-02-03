@@ -4,6 +4,12 @@ class Predator extends Entity {
     super(x, y, radius, level);
   }
 
+  // 포식자 속도 (기본 속도에 패널티 적용)
+  getSpeed() {
+    const baseSpeed = super.getSpeed();
+    return baseSpeed * CONFIG.PREDATOR_SPEED_PENALTY;
+  }
+
   // 업데이트 - Phase 3: 기본 배회만, Phase 4에서 추적 로직 추가
   update(player, deltaTime) {
     const distance = this.distanceTo(player);
