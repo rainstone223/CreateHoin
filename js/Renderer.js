@@ -62,6 +62,20 @@ class Renderer {
   // 개체 그리기 (Entity, Prey, Predator)
   drawEntity(entity, color) {
     this.drawCircle(entity.x, entity.y, entity.radius, color);
+
+    // 개체 레벨명 라벨 표시
+    if (entity.level !== undefined && entity.level >= 0 && entity.level < CONFIG.LEVELS.length) {
+      const levelName = CONFIG.LEVELS[entity.level].name;
+      this.drawText(
+        levelName,
+        entity.x,
+        entity.y + entity.radius + 8,
+        10,
+        'rgba(255, 255, 255, 0.8)',
+        'center',
+        'top'
+      );
+    }
   }
 
   // 플레이어 그리기 (최종 레벨인 경우 특별 표시)
