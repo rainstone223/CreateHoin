@@ -7,14 +7,14 @@ const CONFIG = {
   // 게임 경계 (스폰 시 가장자리 패딩)
   BOUNDARY_PADDING: 50,
 
-  // 레벨 정의 (6단계) - 크기 증가, 경험치 요구량 추가 감소
+  // 레벨 정의 (6단계) - 크기 증가, 경험치 완만하게 조정
   LEVELS: [
     { name: "사원", size: 18, xpRequired: 0 },
-    { name: "대리", size: 23, xpRequired: 60 },
-    { name: "과장", size: 28, xpRequired: 150 },
-    { name: "부장", size: 34, xpRequired: 270 },
-    { name: "사장", size: 41, xpRequired: 450 },
-    { name: "호인", size: 50, xpRequired: 1000 } // 호인 달성 100마리
+    { name: "대리", size: 23, xpRequired: 50 },
+    { name: "과장", size: 28, xpRequired: 110 },
+    { name: "부장", size: 34, xpRequired: 180 },
+    { name: "사장", size: 41, xpRequired: 260 },
+    { name: "호인", size: 50, xpRequired: 600 } // 호인 달성 60마리
   ],
 
   // 개체 설정
