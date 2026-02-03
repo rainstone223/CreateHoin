@@ -92,6 +92,15 @@ function init() {
   // 클릭하면 게임 시작
   game.canvas.addEventListener('click', startGame, { once: true });
 
+  // 엔터키로도 게임 시작 가능
+  const handleEnterKey = (e) => {
+    if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
+      window.removeEventListener('keydown', handleEnterKey);
+      startGame();
+    }
+  };
+  window.addEventListener('keydown', handleEnterKey);
+
   // 디버그 키 설정
   setupDebugKeys();
 

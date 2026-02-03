@@ -11,6 +11,14 @@ class Entity {
     this.wanderChangeTime = 0;
   }
 
+  // 크기에 반비례하는 속도 계산 (작을수록 빠름)
+  getSpeed() {
+    // 공식: baseSpeed * (maxSize / currentSize) ^ speedVariation
+    // speedVariation이 0.3이면 크기 차이가 커도 속도 차이는 완만
+    const speedMultiplier = Math.pow(CONFIG.MAX_SIZE / this.radius, CONFIG.SPEED_VARIATION);
+    return CONFIG.BASE_SPEED * speedMultiplier;
+  }
+
   // 기본 업데이트 (자식 클래스에서 오버라이드)
   update(player, deltaTime) {
     // 자식 클래스에서 구현
@@ -26,7 +34,7 @@ class Entity {
     }
 
     // 배회 속도는 개체 속도의 절반
-    const wanderSpeed = CONFIG.ENTITY_SPEED * 0.5;
+    const wanderSpeed = this.getSpeed() * 0.5;
     this.x += Math.cos(this.wanderAngle) * wanderSpeed * deltaTime;
     this.y += Math.sin(this.wanderAngle) * wanderSpeed * deltaTime;
 

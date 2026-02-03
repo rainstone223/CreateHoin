@@ -18,16 +18,17 @@ class Prey extends Entity {
     }
   }
 
-  // 플레이어로부터 도망 (Phase 4에서 구현 예정)
+  // 플레이어로부터 도망
   fleeFrom(player, deltaTime) {
     // 플레이어 반대 방향 계산
     const dx = this.x - player.x;
     const dy = this.y - player.y;
     const angle = Math.atan2(dy, dx);
 
-    // 반대 방향으로 이동
-    this.x += Math.cos(angle) * CONFIG.ENTITY_SPEED * deltaTime;
-    this.y += Math.sin(angle) * CONFIG.ENTITY_SPEED * deltaTime;
+    // 반대 방향으로 이동 (크기에 반비례하는 속도)
+    const speed = this.getSpeed();
+    this.x += Math.cos(angle) * speed * deltaTime;
+    this.y += Math.sin(angle) * speed * deltaTime;
 
     // 경계 내 유지
     this.constrainToBounds();

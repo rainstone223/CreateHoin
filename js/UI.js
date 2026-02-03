@@ -10,51 +10,72 @@ class UI {
   drawStartScreen() {
     this.renderer.drawBackground();
 
-    // 제목
+    // 제목 (큰 노란색)
     this.renderer.drawText(
       '호인 키우기',
       CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 - 100,
-      56,
+      CONFIG.CANVAS_HEIGHT / 2 - 150,
+      64,
       '#FFD700',
       'center',
       'middle'
     );
 
-    // 설명
+    // 부제목 (흰색)
     this.renderer.drawText(
       '작은 호인이 성장하여 최종 단계 "호인"에 도달하세요!',
       CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 - 30,
+      CONFIG.CANVAS_HEIGHT / 2 - 80,
       18,
       'rgba(255, 255, 255, 0.9)',
       'center',
       'middle'
     );
 
-    // 조작 방법
+    // 조작 방법 (밝은 회색)
     this.renderer.drawText(
       'WASD 또는 화살표 키로 호인을 조작하세요',
       CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 + 10,
+      CONFIG.CANVAS_HEIGHT / 2 - 45,
       16,
-      'rgba(255, 255, 255, 0.7)',
+      'rgba(200, 200, 200, 0.8)',
       'center',
       'middle'
     );
 
-    // 시작 버튼
+    // 시작 버튼 (초록색, 깜빡임 효과)
+    const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
     this.renderer.drawText(
       '클릭하여 시작',
       CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 + 70,
-      28,
-      '#4CAF50',
+      CONFIG.CANVAS_HEIGHT / 2 + 30,
+      32,
+      `rgba(76, 175, 80, ${pulse})`,
       'center',
       'middle'
     );
 
-    // 규칙
+    // 엔터키 안내 (작은 텍스트)
+    this.renderer.drawText(
+      '또는 Enter 키를 눌러 시작',
+      CONFIG.CANVAS_WIDTH / 2,
+      CONFIG.CANVAS_HEIGHT / 2 + 65,
+      14,
+      'rgba(150, 150, 150, 0.7)',
+      'center',
+      'middle'
+    );
+
+    // 구분선
+    const ctx = this.renderer.ctx;
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(CONFIG.CANVAS_WIDTH / 2 - 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
+    ctx.lineTo(CONFIG.CANVAS_WIDTH / 2 + 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
+    ctx.stroke();
+
+    // 규칙 (작은 글씨, 정렬)
     const rules = [
       '• 초록색 개체를 먹어 성장하세요',
       '• 빨간색 개체는 피하세요 (게임 오버)',
@@ -65,9 +86,9 @@ class UI {
       this.renderer.drawText(
         rule,
         CONFIG.CANVAS_WIDTH / 2,
-        CONFIG.CANVAS_HEIGHT / 2 + 130 + index * 25,
-        14,
-        'rgba(255, 255, 255, 0.6)',
+        CONFIG.CANVAS_HEIGHT / 2 + 125 + index * 22,
+        13,
+        'rgba(180, 180, 180, 0.7)',
         'center',
         'middle'
       );

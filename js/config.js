@@ -18,9 +18,11 @@ const CONFIG = {
   ],
 
   // 개체 설정
-  ENTITY_SPEED: 2.5, // 모든 개체 동일 속도
-  PREY_COUNT_MIN: 5,
-  PREY_COUNT_MAX: 10,
+  BASE_SPEED: 2.5, // 기본 속도 (크기에 따라 가변)
+  MAX_SIZE: 50, // 최대 크기 (속도 계산용)
+  SPEED_VARIATION: 0.3, // 속도 변화 지수 (낮을수록 완만)
+  PREY_COUNT_MIN: 3,
+  PREY_COUNT_MAX: 7,
   PREDATOR_COUNT_MIN: 4,
   PREDATOR_COUNT_MAX: 6,
   XP_PER_PREY: 10,
