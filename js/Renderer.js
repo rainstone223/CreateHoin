@@ -122,7 +122,7 @@ class Renderer {
       });
 
       // 플레이어 그리기
-      const isHoin = levelSystem.currentLevel === 8; // 인덱스 8 = 호인
+      const isHoin = levelSystem.currentLevel === 5; // 인덱스 5 = 호인
       this.drawPlayer(player, isHoin, godMode);
     }
   }
