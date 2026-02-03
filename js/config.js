@@ -18,11 +18,12 @@ const CONFIG = {
   ],
 
   // 개체 설정
-  BASE_SPEED: 2.5, // 기본 속도 (크기에 따라 가변)
-  MAX_SIZE: 50, // 최대 크기 (속도 계산용)
-  SPEED_VARIATION: 0.3, // 속도 변화 지수 (낮을수록 완만)
-  PREY_COUNT_MIN: 3,
-  PREY_COUNT_MAX: 7,
+  ENTITY_SPEED: 2.5, // 개체들의 동일 속도 (롤백)
+  PLAYER_BASE_SPEED: 5, // 플레이어 기본 속도
+  MAX_SIZE: 50, // 최대 크기 (플레이어 속도 계산용)
+  SPEED_PENALTY: 0.4, // 플레이어 속도 감소 지수 (클수록 느려짐)
+  PREY_COUNT_MIN: 4,
+  PREY_COUNT_MAX: 8,
   PREDATOR_COUNT_MIN: 4,
   PREDATOR_COUNT_MAX: 6,
   XP_PER_PREY: 10,

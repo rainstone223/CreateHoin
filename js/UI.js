@@ -260,7 +260,7 @@ class UI {
 
     // 재시작 안내
     this.renderer.drawText(
-      'F5를 눌러 재시작',
+      'Enter를 눌러 재시작',
       CONFIG.CANVAS_WIDTH / 2,
       CONFIG.CANVAS_HEIGHT / 2 + 120,
       22,
@@ -323,7 +323,7 @@ class UI {
 
     // 재시작 안내
     this.renderer.drawText(
-      'F5를 눌러 다시 플레이',
+      'Enter를 눌러 다시 플레이',
       CONFIG.CANVAS_WIDTH / 2,
       CONFIG.CANVAS_HEIGHT / 2 + 120,
       20,

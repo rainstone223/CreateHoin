@@ -111,6 +111,12 @@ function init() {
 // 디버그 키 설정
 function setupDebugKeys() {
   window.addEventListener('keydown', (e) => {
+    // 게임 오버/승리 시 엔터키로 재시작
+    if (e.key === 'Enter' && (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY)) {
+      location.reload();
+      return;
+    }
+
     if (game.state !== CONFIG.STATE.PLAYING) return;
 
     switch (e.key.toLowerCase()) {

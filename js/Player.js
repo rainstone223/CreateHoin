@@ -7,15 +7,18 @@ class Player {
     this.radius = levelSystem.getCurrentSize();
   }
 
-  // 크기에 반비례하는 속도 계산 (작을수록 빠름)
+  // 크기에 따른 속도 계산 (클수록 느림)
   getSpeed() {
-    const speedMultiplier = Math.pow(CONFIG.MAX_SIZE / this.radius, CONFIG.SPEED_VARIATION);
-    return CONFIG.BASE_SPEED * speedMultiplier * 2; // 플레이어는 개체보다 2배 빠름
+    // 공식: baseSpeed * (1 - (currentSize / maxSize) ^ speedPenalty)
+    // 크기가 클수록 속도가 감소
+    const sizeRatio = this.radius / CONFIG.MAX_SIZE;
+    const speedMultiplier = 1 - Math.pow(sizeRatio, CONFIG.SPEED_PENALTY);
+    return CONFIG.PLAYER_BASE_SPEED * Math.max(0.5, speedMultiplier); // 최소 50% 속도 보장
   }
 
   // WASD 키보드로 이동
   update(direction, deltaTime) {
-    // 크기에 반비례하는 속도
+    // 크기에 따라 느려지는 속도
     const speed = this.getSpeed();
 
     // 방향에 따라 이동

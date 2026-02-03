@@ -25,10 +25,9 @@ class Prey extends Entity {
     const dy = this.y - player.y;
     const angle = Math.atan2(dy, dx);
 
-    // 반대 방향으로 이동 (크기에 반비례하는 속도)
-    const speed = this.getSpeed();
-    this.x += Math.cos(angle) * speed * deltaTime;
-    this.y += Math.sin(angle) * speed * deltaTime;
+    // 반대 방향으로 이동
+    this.x += Math.cos(angle) * CONFIG.ENTITY_SPEED * deltaTime;
+    this.y += Math.sin(angle) * CONFIG.ENTITY_SPEED * deltaTime;
 
     // 경계 내 유지
     this.constrainToBounds();
