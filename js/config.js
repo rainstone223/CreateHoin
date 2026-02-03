@@ -18,7 +18,7 @@ const CONFIG = {
   ],
 
   // 개체 설정
-  BASE_SPEED: 3.5, // 기본 속도 (플레이 가능한 수준으로 감소)
+  BASE_SPEED: 2.5, // 기본 속도 (초기 세팅으로 복원)
   MAX_SIZE: 50, // 최대 크기 (속도 계산용)
   SPEED_VARIATION: 0.25, // 속도 변화 지수 (낮을수록 완만)
   PREY_COUNT_MIN: 7,
