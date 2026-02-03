@@ -34,7 +34,7 @@ class UI {
 
     // 조작 방법
     this.renderer.drawText(
-      '마우스로 호인을 조작하세요',
+      'WASD 또는 화살표 키로 호인을 조작하세요',
       CONFIG.CANVAS_WIDTH / 2,
       CONFIG.CANVAS_HEIGHT / 2 + 10,
       16,

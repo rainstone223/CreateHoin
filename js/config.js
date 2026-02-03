@@ -7,17 +7,17 @@ const CONFIG = {
   // 게임 경계 (스폰 시 가장자리 패딩)
   BOUNDARY_PADDING: 50,
 
-  // 레벨 정의 (9단계)
+  // 레벨 정의 (9단계) - 크기 축소
   LEVELS: [
-    { name: "사원", size: 20, xpRequired: 0 },
-    { name: "대리", size: 24, xpRequired: 100 },
-    { name: "과장", size: 29, xpRequired: 250 },
-    { name: "차장", size: 35, xpRequired: 450 },
-    { name: "부장", size: 42, xpRequired: 700 },
-    { name: "임원", size: 50, xpRequired: 1000 },
-    { name: "사장", size: 60, xpRequired: 1400 },
-    { name: "회장", size: 72, xpRequired: 1900 },
-    { name: "호인", size: 86, xpRequired: 2500 }
+    { name: "사원", size: 12, xpRequired: 0 },
+    { name: "대리", size: 15, xpRequired: 100 },
+    { name: "과장", size: 18, xpRequired: 250 },
+    { name: "차장", size: 22, xpRequired: 450 },
+    { name: "부장", size: 26, xpRequired: 700 },
+    { name: "임원", size: 31, xpRequired: 1000 },
+    { name: "사장", size: 37, xpRequired: 1400 },
+    { name: "회장", size: 44, xpRequired: 1900 },
+    { name: "호인", size: 53, xpRequired: 2500 }
   ],
 
   // 개체 설정

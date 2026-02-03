@@ -7,26 +7,16 @@ class Player {
     this.radius = levelSystem.getCurrentSize();
   }
 
-  // 마우스를 향해 부드럽게 이동
-  update(mouseX, mouseY, deltaTime) {
-    const dx = mouseX - this.x;
-    const dy = mouseY - this.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+  // WASD 키보드로 이동
+  update(direction, deltaTime) {
+    // 이동 속도
+    const speed = 5; // 플레이어 속도
 
-    // 목표 위치에 거의 도달한 경우 그대로 유지
-    if (distance < 2) {
-      this.x = mouseX;
-      this.y = mouseY;
-      return;
+    // 방향에 따라 이동
+    if (direction.dx !== 0 || direction.dy !== 0) {
+      this.x += direction.dx * speed * deltaTime;
+      this.y += direction.dy * speed * deltaTime;
     }
-
-    // 정규화된 방향 벡터로 이동 (속도 조절 가능)
-    const speed = 4; // 플레이어 속도
-    const moveX = (dx / distance) * speed * deltaTime;
-    const moveY = (dy / distance) * speed * deltaTime;
-
-    this.x += moveX;
-    this.y += moveY;
 
     // 캔버스 경계 내에 유지
     this.x = Math.max(this.radius, Math.min(CONFIG.CANVAS_WIDTH - this.radius, this.x));

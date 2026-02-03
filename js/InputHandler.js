@@ -1,28 +1,56 @@
-// 마우스 입력 처리
+// 키보드 입력 처리 (WASD)
 class InputHandler {
   constructor(canvas) {
     this.canvas = canvas;
-    this.mouseX = canvas.width / 2;
-    this.mouseY = canvas.height / 2;
 
-    // 마우스 이동 이벤트 리스너
-    canvas.addEventListener('mousemove', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      // 캔버스 스케일 고려한 정확한 좌표 계산
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
+    // 키 상태 추적
+    this.keys = {
+      w: false,
+      a: false,
+      s: false,
+      d: false,
+      ArrowUp: false,
+      ArrowLeft: false,
+      ArrowDown: false,
+      ArrowRight: false
+    };
 
-      this.mouseX = (e.clientX - rect.left) * scaleX;
-      this.mouseY = (e.clientY - rect.top) * scaleY;
+    // 키보드 이벤트 리스너
+    window.addEventListener('keydown', (e) => {
+      const key = e.key.toLowerCase();
+      if (key in this.keys || e.key in this.keys) {
+        this.keys[key in this.keys ? key : e.key] = true;
+        e.preventDefault();
+      }
     });
 
-    // 마우스가 캔버스를 벗어날 때
-    canvas.addEventListener('mouseleave', () => {
-      // 마우스가 벗어나도 마지막 위치 유지
+    window.addEventListener('keyup', (e) => {
+      const key = e.key.toLowerCase();
+      if (key in this.keys || e.key in this.keys) {
+        this.keys[key in this.keys ? key : e.key] = false;
+        e.preventDefault();
+      }
     });
   }
 
-  getMousePosition() {
-    return { x: this.mouseX, y: this.mouseY };
+  // 이동 방향 벡터 반환
+  getMovementDirection() {
+    let dx = 0;
+    let dy = 0;
+
+    // WASD 키
+    if (this.keys.w || this.keys.ArrowUp) dy -= 1;
+    if (this.keys.s || this.keys.ArrowDown) dy += 1;
+    if (this.keys.a || this.keys.ArrowLeft) dx -= 1;
+    if (this.keys.d || this.keys.ArrowRight) dx += 1;
+
+    // 대각선 이동 시 속도 정규화
+    if (dx !== 0 && dy !== 0) {
+      const length = Math.sqrt(dx * dx + dy * dy);
+      dx /= length;
+      dy /= length;
+    }
+
+    return { dx, dy };
   }
 }

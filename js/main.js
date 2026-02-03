@@ -159,11 +159,11 @@ function update(deltaTime) {
     // 경과 시간 업데이트
     game.elapsedTime = (Date.now() - game.startTime) / 1000; // 초 단위
 
-    // 마우스 위치 가져오기
-    const mouse = game.inputHandler.getMousePosition();
+    // 키보드 입력 가져오기
+    const direction = game.inputHandler.getMovementDirection();
 
     // 플레이어 업데이트
-    game.player.update(mouse.x, mouse.y, deltaTime);
+    game.player.update(direction, deltaTime);
 
     // 개체 업데이트
     game.entityManager.updateAll(game.player, deltaTime);

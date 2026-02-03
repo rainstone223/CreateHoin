@@ -24,7 +24,7 @@ body {
 #gameCanvas {
   display: block;
   background: #1a1a2e;
-  cursor: none; /* 마우스 커서 숨김 - 게임 내 커서로 대체 */
+  cursor: default; /* 키보드 조작이므로 커서 표시 */
 }
 
 /* 게임 로딩 중 표시 */
