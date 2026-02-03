@@ -7,20 +7,21 @@ const CONFIG = {
   // 게임 경계 (스폰 시 가장자리 패딩)
   BOUNDARY_PADDING: 50,
 
-  // 레벨 정의 (6단계)
+  // 레벨 정의 (6단계) - 크기 증가, 단계별 차이 감소
   LEVELS: [
-    { name: "사원", size: 12, xpRequired: 0 },
-    { name: "대리", size: 16, xpRequired: 100 },
-    { name: "과장", size: 21, xpRequired: 250 },
-    { name: "부장", size: 28, xpRequired: 450 },
+    { name: "사원", size: 15, xpRequired: 0 },
+    { name: "대리", size: 19, xpRequired: 100 },
+    { name: "과장", size: 24, xpRequired: 250 },
+    { name: "부장", size: 30, xpRequired: 450 },
     { name: "사장", size: 37, xpRequired: 700 },
-    { name: "호인", size: 50, xpRequired: 1500 } // 호인 달성 더 어렵게
+    { name: "호인", size: 45, xpRequired: 1500 } // 호인 달성 더 어렵게
   ],
 
   // 개체 설정
   BASE_SPEED: 2.5, // 기본 속도 (초기 세팅으로 복원)
-  MAX_SIZE: 50, // 최대 크기 (속도 계산용)
-  SPEED_VARIATION: 0.25, // 속도 변화 지수 (낮을수록 완만)
+  MAX_SIZE: 45, // 최대 크기 (속도 계산용)
+  SPEED_VARIATION: 0.4, // 속도 변화 지수 (큰 개체일수록 더 느리게)
+  PLAYER_SPEED_BOOST: 1.15, // 플레이어 속도 부스트 (같은 크기 대비 15% 빠름)
   PREY_COUNT_MIN: 7,
   PREY_COUNT_MAX: 10,
   PREDATOR_COUNT_MIN: 4,
