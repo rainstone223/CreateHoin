@@ -1,0 +1,6 @@
+# Claude Code 계획 파일
+.claude/
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
