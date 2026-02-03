@@ -9,16 +9,16 @@ const CONFIG = {
 
   // 레벨 정의 (6단계) - 크기 증가, 경험치 완만하게 조정
   LEVELS: [
-    { name: "사원", size: 18, xpRequired: 0, image: "public/sawon (1).png" },
-    { name: "대리", size: 23, xpRequired: 50, image: "public/daeri (1).png" },
-    { name: "과장", size: 28, xpRequired: 110, image: "public/gwajang (1).png" },
-    { name: "부장", size: 34, xpRequired: 180, image: "public/bujang (1).png" },
-    { name: "사장", size: 41, xpRequired: 260, image: "public/sajang (1).png" },
-    { name: "회장", size: 50, xpRequired: 600, image: "public/hweojang.png" } // 포식자 최고 레벨 (플레이어는 "호인")
+    { name: "사원", size: 18, xpRequired: 0, image: "/sawon (1).png" },
+    { name: "대리", size: 23, xpRequired: 50, image: "/daeri (1).png" },
+    { name: "과장", size: 28, xpRequired: 110, image: "/gwajang (1).png" },
+    { name: "부장", size: 34, xpRequired: 180, image: "/bujang (1).png" },
+    { name: "사장", size: 41, xpRequired: 260, image: "/sajang (1).png" },
+    { name: "회장", size: 50, xpRequired: 600, image: "/hweojang.png" } // 포식자 최고 레벨 (플레이어는 "호인")
   ],
 
   // 플레이어 이미지 (레벨과 무관하게 항상 호인)
-  PLAYER_IMAGE: "public/hoin.png",
+  PLAYER_IMAGE: "/hoin.png",
 
   // 개체 설정
   BASE_SPEED: 2.5, // 기본 속도 (초기 세팅으로 복원)
