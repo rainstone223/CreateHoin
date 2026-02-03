@@ -14,17 +14,17 @@ const CONFIG = {
     { name: "과장", size: 21, xpRequired: 250 },
     { name: "부장", size: 28, xpRequired: 450 },
     { name: "사장", size: 37, xpRequired: 700 },
-    { name: "호인", size: 50, xpRequired: 1000 }
+    { name: "호인", size: 50, xpRequired: 1500 } // 호인 달성 더 어렵게
   ],
 
   // 개체 설정
-  BASE_SPEED: 7, // 기본 속도
+  BASE_SPEED: 3.5, // 기본 속도 (플레이 가능한 수준으로 감소)
   MAX_SIZE: 50, // 최대 크기 (속도 계산용)
   SPEED_VARIATION: 0.25, // 속도 변화 지수 (낮을수록 완만)
   PREY_COUNT_MIN: 7,
   PREY_COUNT_MAX: 10,
-  PREDATOR_COUNT_MIN: 3,
-  PREDATOR_COUNT_MAX: 5,
+  PREDATOR_COUNT_MIN: 4,
+  PREDATOR_COUNT_MAX: 6,
   XP_PER_PREY: 10,
 
   // AI 행동 설정
