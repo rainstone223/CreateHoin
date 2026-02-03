@@ -21,7 +21,7 @@ const CONFIG = {
   BASE_SPEED: 2.5, // 기본 속도 (초기 세팅으로 복원)
   MAX_SIZE: 50, // 최대 크기 (속도 계산용)
   SPEED_VARIATION: 0.4, // 속도 변화 지수 (큰 개체일수록 더 느리게)
-  PLAYER_SPEED_BOOST: 1.15, // 플레이어 속도 부스트 (같은 크기 대비 15% 빠름)
+  PLAYER_SPEED_BOOST: 1.25, // 플레이어 속도 부스트 (같은 크기 대비 25% 빠름)
   PREY_COUNT_MIN: 7,
   PREY_COUNT_MAX: 10,
   PREDATOR_COUNT_MIN: 3,
