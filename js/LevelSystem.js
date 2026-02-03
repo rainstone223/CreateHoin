@@ -29,9 +29,16 @@ class LevelSystem {
     };
   }
 
-  // 현재 레벨 정보 가져오기
+  // 현재 레벨 정보 가져오기 (플레이어는 레벨 5를 "호인"으로 표시)
   getCurrentLevel() {
-    return CONFIG.LEVELS[this.currentLevel];
+    const level = CONFIG.LEVELS[this.currentLevel];
+
+    // 플레이어가 최대 레벨(5)에 도달하면 "호인"으로 표시
+    if (this.currentLevel === CONFIG.LEVELS.length - 1) {
+      return { ...level, name: "호인" };
+    }
+
+    return level;
   }
 
   // 다음 레벨 정보 가져오기

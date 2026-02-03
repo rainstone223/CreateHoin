@@ -18,6 +18,7 @@ const game = {
   inputHandler: null,
   collisionDetector: null,
   ui: null,
+  imageLoader: null,
 
   // 통계
   elapsedTime: 0,
@@ -37,8 +38,14 @@ function init() {
     return;
   }
 
-  // Renderer 초기화
-  game.renderer = new Renderer(game.canvas, game.ctx);
+  // ImageLoader 초기화 및 이미지 로드
+  game.imageLoader = new ImageLoader();
+  game.imageLoader.loadAll(() => {
+    console.log('이미지 로드 완료, 게임 준비됨');
+  });
+
+  // Renderer 초기화 (imageLoader 전달)
+  game.renderer = new Renderer(game.canvas, game.ctx, game.imageLoader);
 
   // 입력 핸들러 초기화
   game.inputHandler = new InputHandler(game.canvas);
@@ -67,6 +74,8 @@ function init() {
     // 레벨업 알림
     if (result.leveledUp) {
       game.ui.showLevelUpNotification(game.levelSystem.getCurrentLevel().name);
+      // 레벨업 시 약한 포식자 제거 및 재생성
+      game.entityManager.cleanupWeakPredators(game.player);
     }
 
     // 먹이 제거 및 리스폰
@@ -125,6 +134,8 @@ function setupDebugKeys() {
         if (game.levelSystem.currentLevel < CONFIG.LEVELS.length - 1) {
           game.levelSystem.currentLevel++;
           game.ui.showLevelUpNotification(game.levelSystem.getCurrentLevel().name);
+          // 레벨업 시 약한 포식자 제거 및 재생성
+          game.entityManager.cleanupWeakPredators(game.player);
           console.log('디버그: 레벨업!', game.levelSystem.getCurrentLevel().name);
         }
         break;

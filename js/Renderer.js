@@ -1,8 +1,9 @@
 // 캔버스 렌더링 시스템
 class Renderer {
-  constructor(canvas, ctx) {
+  constructor(canvas, ctx, imageLoader = null) {
     this.canvas = canvas;
     this.ctx = ctx;
+    this.imageLoader = imageLoader;
   }
 
   // 캔버스 초기화
@@ -61,7 +62,29 @@ class Renderer {
 
   // 개체 그리기 (Entity, Prey, Predator)
   drawEntity(entity, color) {
-    this.drawCircle(entity.x, entity.y, entity.radius, color);
+    // 이미지 로더가 있고 이미지가 로드되었으면 이미지 렌더링
+    if (this.imageLoader && this.imageLoader.isLoaded() &&
+        entity.level !== undefined && entity.level >= 0 && entity.level < CONFIG.LEVELS.length) {
+      const img = this.imageLoader.getLevelImage(entity.level);
+
+      if (img && img.complete) {
+        // 이미지를 원형 크기에 맞춰 그리기
+        const size = entity.radius * 2;
+        this.ctx.drawImage(
+          img,
+          entity.x - entity.radius,
+          entity.y - entity.radius,
+          size,
+          size
+        );
+      } else {
+        // 이미지 로드 실패 시 원형으로 폴백
+        this.drawCircle(entity.x, entity.y, entity.radius, color);
+      }
+    } else {
+      // 이미지 로더가 없거나 로드 중이면 원형으로 그리기
+      this.drawCircle(entity.x, entity.y, entity.radius, color);
+    }
 
     // 개체 레벨명 라벨 표시
     if (entity.level !== undefined && entity.level >= 0 && entity.level < CONFIG.LEVELS.length) {
@@ -86,15 +109,42 @@ class Renderer {
       this.ctx.globalAlpha = pulse;
     }
 
-    // 플레이어 원 그리기
-    this.drawCircle(
-      player.x,
-      player.y,
-      player.radius,
-      godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
-      godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
-      3
-    );
+    // 이미지 로더가 있고 이미지가 로드되었으면 이미지 렌더링
+    if (this.imageLoader && this.imageLoader.isLoaded()) {
+      const img = this.imageLoader.getPlayerImage();
+
+      if (img && img.complete) {
+        // 호인 이미지를 플레이어 크기에 맞춰 그리기
+        const size = player.radius * 2;
+        this.ctx.drawImage(
+          img,
+          player.x - player.radius,
+          player.y - player.radius,
+          size,
+          size
+        );
+      } else {
+        // 이미지 로드 실패 시 원형으로 폴백
+        this.drawCircle(
+          player.x,
+          player.y,
+          player.radius,
+          godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
+          godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+          3
+        );
+      }
+    } else {
+      // 이미지 로더가 없거나 로드 중이면 원형으로 그리기
+      this.drawCircle(
+        player.x,
+        player.y,
+        player.radius,
+        godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
+        godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+        3
+      );
+    }
 
     // 최종 레벨인 경우 후광 효과
     if (isHoinLevel) {

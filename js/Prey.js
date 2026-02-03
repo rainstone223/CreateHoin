@@ -4,6 +4,11 @@ class Prey extends Entity {
     super(x, y, radius, level);
   }
 
+  // 먹이 전용 속도 계산 (패널티 적용)
+  getSpeed() {
+    return super.getSpeed() * CONFIG.PREY_SPEED_PENALTY;
+  }
+
   // 업데이트 - Phase 3: 기본 배회만, Phase 4에서 도망 로직 추가
   update(player, deltaTime) {
     const distance = this.distanceTo(player);

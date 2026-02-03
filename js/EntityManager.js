@@ -43,9 +43,17 @@ class EntityManager {
     this.preyArray.push(prey);
   }
 
-  // 포식자 생성 (플레이어보다 큰 레벨)
+  // 포식자 생성 (플레이어보다 무조건 높은 레벨)
   spawnPredator(player) {
     const playerLevel = player.levelSystem.currentLevel;
+
+    // 포식자는 플레이어보다 무조건 높은 레벨 (최소 +1)
+    const minPredatorLevel = playerLevel + 1;
+
+    // 플레이어가 최대 레벨이면 포식자 생성 불가
+    if (minPredatorLevel > CONFIG.LEVELS.length - 1) {
+      return; // 포식자를 생성하지 않음
+    }
 
     // 플레이어보다 1-3 레벨 높은 포식자 생성
     const predatorLevel = Math.min(
@@ -121,5 +129,29 @@ class EntityManager {
 
     // 포식자 체크 (화면 밖으로 나가도 그냥 유지)
     // 포식자는 화면 밖으로 나가지 않도록 경계로 제한됨
+  }
+
+  // 플레이어보다 낮거나 같은 레벨의 포식자 제거 및 재생성
+  cleanupWeakPredators(player) {
+    const playerLevel = player.levelSystem.currentLevel;
+    let removedCount = 0;
+
+    // 플레이어보다 낮거나 같은 레벨의 포식자 제거
+    this.predatorArray = this.predatorArray.filter(predator => {
+      if (predator.level <= playerLevel) {
+        removedCount++;
+        return false; // 제거
+      }
+      return true; // 유지
+    });
+
+    // 제거된 포식자만큼 새로운 포식자 생성
+    for (let i = 0; i < removedCount; i++) {
+      this.spawnPredator(player);
+    }
+
+    if (removedCount > 0) {
+      console.log(`약한 포식자 ${removedCount}마리 제거 및 재생성`);
+    }
   }
 }
