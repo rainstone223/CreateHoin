@@ -193,13 +193,14 @@ class MobileControls {
   draw(ctx) {
     if (!this.isMobile) return;
 
-    // 조이스틱 베이스
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.beginPath();
-    ctx.arc(this.joystick.baseX, this.joystick.baseY, 60, 0, Math.PI * 2);
-    ctx.fill();
-
+    // 조이스틱은 활성화되었을 때만 표시 (터치한 위치에서 동작)
     if (this.joystick.active) {
+      // 조이스틱 베이스
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.beginPath();
+      ctx.arc(this.joystick.baseX, this.joystick.baseY, 60, 0, Math.PI * 2);
+      ctx.fill();
+
       // 조이스틱 스틱
       ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
       ctx.beginPath();
@@ -210,12 +211,6 @@ class MobileControls {
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
       ctx.lineWidth = 2;
       ctx.stroke();
-    } else {
-      // 비활성 상태 스틱
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.beginPath();
-      ctx.arc(this.joystick.baseX, this.joystick.baseY, 30, 0, Math.PI * 2);
-      ctx.fill();
     }
 
     // 필살기 버튼

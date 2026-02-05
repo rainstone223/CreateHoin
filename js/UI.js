@@ -223,14 +223,12 @@ class UI {
       'middle'
     );
 
-    // 필살기 게이지 (하단 중앙) - 모바일이 아닐 때만
-    const isMobile = this.mobileControls && this.mobileControls.isMobile;
-    if (!isMobile) {
-      this.drawUltimateGauge(player);
-    }
+    // 필살기 게이지 (하단 중앙) - 모바일에서도 표시
+    this.drawUltimateGauge(player);
 
     // 모바일 컨트롤 그리기
-    if (this.mobileControls && this.mobileControls.isMobile) {
+    const isMobile = this.mobileControls && this.mobileControls.isMobile;
+    if (isMobile) {
       this.mobileControls.draw(this.renderer.ctx);
     }
   }
