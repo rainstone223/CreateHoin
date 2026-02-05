@@ -43,6 +43,49 @@ function init() {
     return;
   }
 
+  // 모바일 감지 및 캔버스 크기 조정 (16:9)
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                   (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+
+  if (isMobile) {
+    // 모바일: 16:9 비율 (1067x600)
+    const mobileWidth = Math.round(CONFIG.CANVAS_HEIGHT * 16 / 9);
+    game.canvas.width = mobileWidth;
+    CONFIG.CANVAS_WIDTH = mobileWidth;
+
+    // 화면 면적 비율 계산 (PC 대비)
+    const pcArea = 800 * 600;
+    const mobileArea = mobileWidth * CONFIG.CANVAS_HEIGHT;
+    const areaRatio = mobileArea / pcArea;
+
+    // 개체 크기 스케일 팩터 (면적의 제곱근)
+    const sizeScale = Math.sqrt(areaRatio);
+    CONFIG.SIZE_SCALE = sizeScale;
+
+    // 모든 레벨의 크기를 스케일 조정
+    CONFIG.LEVELS.forEach(level => {
+      level.size = Math.round(level.size * sizeScale);
+    });
+
+    // 거리 관련 값도 스케일 조정
+    CONFIG.FLEE_DISTANCE = Math.round(CONFIG.FLEE_DISTANCE * sizeScale);
+    CONFIG.CHASE_DISTANCE = Math.round(CONFIG.CHASE_DISTANCE * sizeScale);
+    CONFIG.MIN_SPAWN_DISTANCE = Math.round(CONFIG.MIN_SPAWN_DISTANCE * sizeScale);
+    CONFIG.MAX_SIZE = CONFIG.LEVELS[CONFIG.LEVELS.length - 1].size;
+
+    // 개체 수도 면적 비율에 맞춰 조정 (약간만 증가)
+    const countScale = Math.min(1.3, Math.sqrt(areaRatio));
+    CONFIG.PREY_COUNT_MIN = Math.round(CONFIG.PREY_COUNT_MIN * countScale);
+    CONFIG.PREY_COUNT_MAX = Math.round(CONFIG.PREY_COUNT_MAX * countScale);
+    CONFIG.PREDATOR_COUNT_MAX = Math.round(CONFIG.PREDATOR_COUNT_MAX * countScale);
+
+    console.log(`모바일 모드: 캔버스 크기 ${mobileWidth}x${CONFIG.CANVAS_HEIGHT}, 크기 스케일 ${sizeScale.toFixed(2)}, 개체 수 스케일 ${countScale.toFixed(2)}`);
+  } else {
+    // PC: 기본 크기 유지 (800x600)
+    CONFIG.SIZE_SCALE = 1.0;
+    console.log('PC 모드: 캔버스 크기 800x600');
+  }
+
   // ImageLoader 초기화 및 이미지 로드
   game.imageLoader = new ImageLoader();
   game.imageLoader.loadAll(() => {

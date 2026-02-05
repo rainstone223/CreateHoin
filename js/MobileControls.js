@@ -43,15 +43,16 @@ class MobileControls {
 
   // 버튼 위치 계산 (가로모드 최적화)
   calculateButtonPositions() {
-    // 조이스틱은 왼쪽 하단 (화면 비율에 맞춰 조정)
+    // 화면 비율에 맞춰 마진 조정
     const marginX = Math.min(100, CONFIG.CANVAS_WIDTH * 0.12);
     const marginY = Math.min(100, CONFIG.CANVAS_HEIGHT * 0.17);
 
-    this.joystick.baseX = marginX;
+    // 조이스틱은 오른쪽 하단
+    this.joystick.baseX = CONFIG.CANVAS_WIDTH - marginX;
     this.joystick.baseY = CONFIG.CANVAS_HEIGHT - marginY;
 
-    // 필살기 버튼은 오른쪽 하단
-    this.ultimateButton.x = CONFIG.CANVAS_WIDTH - marginX;
+    // 필살기 버튼은 왼쪽 하단
+    this.ultimateButton.x = marginX;
     this.ultimateButton.y = CONFIG.CANVAS_HEIGHT - marginY;
   }
 
@@ -83,8 +84,21 @@ class MobileControls {
       const touch = e.changedTouches[i];
       const pos = this.getTouchPos(touch);
 
-      // 조이스틱 영역 (왼쪽 절반)
-      if (pos.x < CONFIG.CANVAS_WIDTH / 2 && !this.joystick.active) {
+      // 필살기 버튼 영역 체크 (왼쪽)
+      const dx = pos.x - this.ultimateButton.x;
+      const dy = pos.y - this.ultimateButton.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance <= this.ultimateButton.radius * 1.5) {
+        this.ultimateButton.active = true;
+        this.ultimateButton.touchId = touch.identifier;
+
+        if (this.onUltimateActivate) {
+          this.onUltimateActivate();
+        }
+      }
+      // 조이스틱 영역 (오른쪽 절반)
+      else if (pos.x > CONFIG.CANVAS_WIDTH / 2 && !this.joystick.active) {
         this.joystick.active = true;
         this.joystick.touchId = touch.identifier;
         this.joystick.baseX = pos.x;
@@ -92,21 +106,6 @@ class MobileControls {
         this.joystick.stickX = pos.x;
         this.joystick.stickY = pos.y;
         this.updateJoystickDirection();
-      }
-      // 필살기 버튼 영역
-      else {
-        const dx = pos.x - this.ultimateButton.x;
-        const dy = pos.y - this.ultimateButton.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance <= this.ultimateButton.radius * 1.5) {
-          this.ultimateButton.active = true;
-          this.ultimateButton.touchId = touch.identifier;
-
-          if (this.onUltimateActivate) {
-            this.onUltimateActivate();
-          }
-        }
       }
     }
   }

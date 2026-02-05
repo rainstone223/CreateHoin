@@ -100,23 +100,30 @@ body {
 }
 
 /* 모바일 가로모드 - 게임 표시 */
-@media (orientation: landscape) {
+@media (orientation: landscape) and (max-width: 1200px) {
   body {
     padding: 0;
     align-items: center;
   }
 
   #game-container {
-    max-width: 100%;
+    max-width: 100vw;
     max-height: 100vh;
   }
 
   #gameCanvas {
-    height: 100vh;
-    width: auto;
-    max-width: 100vw;
+    width: 100vw;
+    height: auto;
+    max-height: 100vh;
   }
 
+  #rotate-message {
+    display: none;
+  }
+}
+
+/* PC 환경에서는 가로모드 스타일 적용 안 함 */
+@media (orientation: landscape) and (min-width: 1201px) {
   #rotate-message {
     display: none;
   }
