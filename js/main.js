@@ -13,6 +13,7 @@ const game = {
 
   // 난이도 선택 UI 상태
   selectedDifficulty: 0, // 0: Easy, 1: Hard
+  difficultyScreenEnterTime: 0, // 난이도 선택 화면 진입 시간
 
   // 게임 객체 (나중에 초기화)
   player: null,
@@ -219,6 +220,13 @@ function init() {
   const handleDifficultyKeyboard = (e) => {
     if (game.state !== 'DIFFICULTY_SELECT') return;
 
+    // 난이도 선택 화면 진입 직후 200ms 동안은 입력 무시 (영상 스킵 키와 중복 방지)
+    const timeSinceEnter = Date.now() - game.difficultyScreenEnterTime;
+    if (timeSinceEnter < 200) {
+      console.log('난이도 선택 화면 진입 직후 입력 무시');
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowUp':
       case 'w':
@@ -418,6 +426,7 @@ function setupCreditVideo() {
       // 오프닝 크레딧 끝나면 난이도 선택 화면으로
       hideVideo();
       game.state = 'DIFFICULTY_SELECT';
+      game.difficultyScreenEnterTime = Date.now(); // 진입 시간 기록
       console.log('난이도 선택 화면으로 이동');
     } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
       // 엔딩 크레딧 끝나면 승리 화면
@@ -431,6 +440,8 @@ function setupCreditVideo() {
   const handleSkip = (e) => {
     if ((e.key === 'Escape' || e.key === 'Enter') &&
         (game.state === CONFIG.STATE.STARTING_CREDIT || game.state === CONFIG.STATE.ENDING_CREDIT)) {
+      e.preventDefault();
+      e.stopImmediatePropagation(); // 다른 핸들러로 이벤트 전파 방지
       skipVideo();
     }
   };
@@ -453,6 +464,7 @@ function skipVideo() {
   if (game.state === CONFIG.STATE.STARTING_CREDIT) {
     hideVideo();
     game.state = 'DIFFICULTY_SELECT';
+    game.difficultyScreenEnterTime = Date.now(); // 진입 시간 기록
     console.log('오프닝 크레딧 스킵됨, 난이도 선택 화면으로 이동');
   } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
     hideVideo();
