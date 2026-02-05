@@ -81,8 +81,8 @@ class MobileControls {
       const touch = e.changedTouches[i];
       const pos = this.getTouchPos(touch);
 
-      // 오른쪽 절반: 조이스틱
-      if (pos.x > CONFIG.CANVAS_WIDTH / 2 && !this.joystick.active) {
+      if (!this.joystick.active) {
+        // 조이스틱이 비활성 상태: 화면 어디든 터치하면 조이스틱 생성
         this.joystick.active = true;
         this.joystick.touchId = touch.identifier;
         this.joystick.baseX = pos.x;
@@ -90,9 +90,8 @@ class MobileControls {
         this.joystick.stickX = pos.x;
         this.joystick.stickY = pos.y;
         this.updateJoystickDirection();
-      }
-      // 왼쪽 절반: 필살기 발동
-      else if (pos.x <= CONFIG.CANVAS_WIDTH / 2) {
+      } else if (touch.identifier !== this.joystick.touchId) {
+        // 조이스틱 활성 중 다른 곳 터치: 필살기 발동
         if (this.onUltimateActivate) {
           this.onUltimateActivate();
         }
