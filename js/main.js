@@ -92,6 +92,9 @@ function init() {
     const sizeScale = Math.sqrt(areaRatio);
     CONFIG.SIZE_SCALE = sizeScale;
 
+    // 속도도 화면 크기에 맞춰 조정 (PC와 동일한 플레이 느낌 유지)
+    CONFIG.BASE_SPEED = 2.5 * sizeScale;
+
     // 모든 레벨의 크기를 스케일 조정
     CONFIG.LEVELS.forEach(level => {
       level.size = Math.round(level.size * sizeScale);
