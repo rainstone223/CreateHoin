@@ -51,8 +51,8 @@ class MobileControls {
     this.joystick.baseX = CONFIG.CANVAS_WIDTH - marginX;
     this.joystick.baseY = CONFIG.CANVAS_HEIGHT - marginY;
 
-    // 필살기 버튼은 왼쪽 하단
-    this.ultimateButton.x = marginX;
+    // 필살기 버튼은 하단 중앙
+    this.ultimateButton.x = CONFIG.CANVAS_WIDTH / 2;
     this.ultimateButton.y = CONFIG.CANVAS_HEIGHT - marginY;
   }
 

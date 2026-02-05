@@ -32,14 +32,22 @@ class Predator extends Entity {
     // 플레이어 방향 계산
     const dx = player.x - this.x;
     const dy = player.y - this.y;
-    const angle = Math.atan2(dy, dx);
+    const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // 플레이어 방향으로 이동 (크기에 반비례하는 속도)
-    const speed = this.getSpeed();
-    this.x += Math.cos(angle) * speed * deltaTime;
-    this.y += Math.sin(angle) * speed * deltaTime;
+    if (distance > 0) {
+      // 정규화된 방향
+      const dirX = dx / distance;
+      const dirY = dy / distance;
 
-    // 경계 내 유지
-    this.constrainToBounds();
+      // 플레이어 방향으로 이동 (크기에 반비례하는 속도)
+      const speed = this.getSpeed();
+      this.x += dirX * speed * deltaTime;
+      this.y += dirY * speed * deltaTime;
+    }
+
+    // 경계 내 유지 (하드 클램프 - 경계에서도 계속 추적 가능)
+    const padding = CONFIG.BOUNDARY_PADDING;
+    this.x = Math.max(padding, Math.min(CONFIG.CANVAS_WIDTH - padding, this.x));
+    this.y = Math.max(padding, Math.min(CONFIG.CANVAS_HEIGHT - padding, this.y));
   }
 }
