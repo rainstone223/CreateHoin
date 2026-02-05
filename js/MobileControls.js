@@ -43,17 +43,14 @@ class MobileControls {
 
   // 버튼 위치 계산 (가로모드 최적화)
   calculateButtonPositions() {
-    // 화면 비율에 맞춰 마진 조정
+    // 조이스틱 초기 위치 (터치 시 실제 위치로 변경됨)
     const marginX = Math.min(100, CONFIG.CANVAS_WIDTH * 0.12);
     const marginY = Math.min(100, CONFIG.CANVAS_HEIGHT * 0.17);
 
-    // 조이스틱은 오른쪽 하단
     this.joystick.baseX = CONFIG.CANVAS_WIDTH - marginX;
     this.joystick.baseY = CONFIG.CANVAS_HEIGHT - marginY;
 
-    // 필살기 버튼은 하단 중앙
-    this.ultimateButton.x = CONFIG.CANVAS_WIDTH / 2;
-    this.ultimateButton.y = CONFIG.CANVAS_HEIGHT - marginY;
+    // 필살기는 화면 왼쪽 절반 터치로 발동 (버튼 위치 불필요)
   }
 
   // 터치 이벤트 설정
@@ -84,21 +81,8 @@ class MobileControls {
       const touch = e.changedTouches[i];
       const pos = this.getTouchPos(touch);
 
-      // 필살기 버튼 영역 체크 (왼쪽)
-      const dx = pos.x - this.ultimateButton.x;
-      const dy = pos.y - this.ultimateButton.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance <= this.ultimateButton.radius * 1.5) {
-        this.ultimateButton.active = true;
-        this.ultimateButton.touchId = touch.identifier;
-
-        if (this.onUltimateActivate) {
-          this.onUltimateActivate();
-        }
-      }
-      // 조이스틱 영역 (오른쪽 절반)
-      else if (pos.x > CONFIG.CANVAS_WIDTH / 2 && !this.joystick.active) {
+      // 오른쪽 절반: 조이스틱
+      if (pos.x > CONFIG.CANVAS_WIDTH / 2 && !this.joystick.active) {
         this.joystick.active = true;
         this.joystick.touchId = touch.identifier;
         this.joystick.baseX = pos.x;
@@ -106,6 +90,12 @@ class MobileControls {
         this.joystick.stickX = pos.x;
         this.joystick.stickY = pos.y;
         this.updateJoystickDirection();
+      }
+      // 왼쪽 절반: 필살기 발동
+      else if (pos.x <= CONFIG.CANVAS_WIDTH / 2) {
+        if (this.onUltimateActivate) {
+          this.onUltimateActivate();
+        }
       }
     }
   }
@@ -152,12 +142,6 @@ class MobileControls {
         this.joystick.touchId = null;
         this.joystick.dx = 0;
         this.joystick.dy = 0;
-      }
-
-      // 필살기 버튼 종료
-      if (this.ultimateButton.active && touch.identifier === this.ultimateButton.touchId) {
-        this.ultimateButton.active = false;
-        this.ultimateButton.touchId = null;
       }
     }
   }
@@ -213,24 +197,6 @@ class MobileControls {
       ctx.stroke();
     }
 
-    // 필살기 버튼
-    const isActive = this.ultimateButton.active;
-    const pulse = isActive ? 1 : Math.sin(Date.now() / 300) * 0.1 + 0.9;
-
-    ctx.fillStyle = `rgba(255, 215, 0, ${0.3 * pulse})`;
-    ctx.beginPath();
-    ctx.arc(this.ultimateButton.x, this.ultimateButton.y, this.ultimateButton.radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.strokeStyle = `rgba(255, 215, 0, ${0.8 * pulse})`;
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    // 필살기 버튼 텍스트
-    ctx.fillStyle = `rgba(255, 255, 255, ${0.9 * pulse})`;
-    ctx.font = 'bold 16px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('필살기', this.ultimateButton.x, this.ultimateButton.y);
+    // 필살기는 화면 왼쪽 절반 터치로 발동 (버튼 UI 제거)
   }
 }
