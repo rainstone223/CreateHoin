@@ -52,10 +52,16 @@ const CONFIG = {
   // 게임 상태
   STATE: {
     START: 'START',
+    STARTING_CREDIT: 'STARTING_CREDIT',
     PLAYING: 'PLAYING',
     PAUSED: 'PAUSED',
     GAMEOVER: 'GAMEOVER',
     VICTORY_ANIMATION: 'VICTORY_ANIMATION',
+    ENDING_CREDIT: 'ENDING_CREDIT',
     VICTORY: 'VICTORY'
-  }
+  },
+
+  // 크레딧 영상 경로
+  STARTING_CREDIT_VIDEO: 'assets/startingcredit.mp4',
+  ENDING_CREDIT_VIDEO: 'assets/ending_credit.mp4'
 };

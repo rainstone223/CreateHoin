@@ -28,7 +28,11 @@ const game = {
 
   // 승리 애니메이션
   victoryAnimationStartTime: null,
-  victoryAnimationDuration: 3000 // 3초 동안 확대
+  victoryAnimationDuration: 3000, // 3초 동안 확대
+
+  // 크레딧 비디오
+  creditVideo: null,
+  skipButton: null
 };
 
 // 게임 초기화
@@ -111,16 +115,22 @@ function init() {
   // UI 초기화
   game.ui = new UI(game.renderer);
 
+  // 크레딧 비디오 초기화
+  game.creditVideo = document.getElementById('creditVideo');
+  game.skipButton = document.getElementById('skipButton');
+  setupCreditVideo();
+  setupSkipButton();
+
   console.log('게임 초기화 완료');
 
-  // 클릭하면 게임 시작
-  game.canvas.addEventListener('click', startGame, { once: true });
+  // 클릭하면 게임 시작 (오프닝 크레딧 재생)
+  game.canvas.addEventListener('click', playStartingCredit, { once: true });
 
   // 엔터키로도 게임 시작 가능
   const handleEnterKey = (e) => {
     if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
       window.removeEventListener('keydown', handleEnterKey);
-      startGame();
+      playStartingCredit();
     }
   };
   window.addEventListener('keydown', handleEnterKey);
@@ -167,6 +177,127 @@ function setupDebugKeys() {
         break;
     }
   });
+}
+
+// 크레딧 비디오 설정
+function setupCreditVideo() {
+  const video = game.creditVideo;
+
+  // 비디오 종료 이벤트
+  video.addEventListener('ended', () => {
+    if (game.state === CONFIG.STATE.STARTING_CREDIT) {
+      // 오프닝 크레딧 끝나면 게임 시작
+      hideVideo();
+      startGame();
+    } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
+      // 엔딩 크레딧 끝나면 승리 화면
+      hideVideo();
+      game.state = CONFIG.STATE.VICTORY;
+      console.log('엔딩 크레딧 완료');
+    }
+  });
+
+  // ESC나 Enter로 스킵 가능
+  const handleSkip = (e) => {
+    if ((e.key === 'Escape' || e.key === 'Enter') &&
+        (game.state === CONFIG.STATE.STARTING_CREDIT || game.state === CONFIG.STATE.ENDING_CREDIT)) {
+      skipVideo();
+    }
+  };
+  window.addEventListener('keydown', handleSkip);
+}
+
+// 스킵 버튼 설정
+function setupSkipButton() {
+  game.skipButton.addEventListener('click', () => {
+    skipVideo();
+  });
+}
+
+// 비디오 스킵
+function skipVideo() {
+  const video = game.creditVideo;
+  video.pause();
+
+  // 상태에 따라 다음 단계로 진행
+  if (game.state === CONFIG.STATE.STARTING_CREDIT) {
+    hideVideo();
+    startGame();
+    console.log('오프닝 크레딧 스킵됨');
+  } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
+    hideVideo();
+    game.state = CONFIG.STATE.VICTORY;
+    console.log('엔딩 크레딧 스킵됨');
+  }
+}
+
+// 비디오 표시
+function showVideo(videoSrc) {
+  const video = game.creditVideo;
+  const canvas = game.canvas;
+
+  console.log('비디오 재생 시도:', videoSrc);
+
+  // 비디오 소스 설정
+  video.src = videoSrc;
+  video.load(); // 명시적으로 로드
+
+  // 화면 전환
+  canvas.style.display = 'none';
+  video.style.display = 'block';
+
+  console.log('캔버스 숨김, 비디오 표시');
+  console.log('비디오 display:', video.style.display);
+  console.log('캔버스 display:', canvas.style.display);
+
+  // 비디오가 로드되면 재생
+  const playVideo = () => {
+    video.play()
+      .then(() => {
+        console.log('비디오 재생 성공');
+      })
+      .catch(err => {
+        console.error('비디오 재생 실패:', err);
+        alert('비디오 재생에 실패했습니다. 건너뜁니다.');
+        // 비디오 재생 실패 시 다음 단계로 진행
+        video.dispatchEvent(new Event('ended'));
+      });
+  };
+
+  // 비디오 데이터 로드 완료 시 재생
+  if (video.readyState >= 3) {
+    // 이미 로드됨
+    playVideo();
+  } else {
+    // 로드 대기
+    video.addEventListener('canplay', playVideo, { once: true });
+  }
+}
+
+// 비디오 숨김
+function hideVideo() {
+  const video = game.creditVideo;
+  const canvas = game.canvas;
+
+  video.style.display = 'none';
+  canvas.style.display = 'block';
+  video.src = '';
+  game.skipButton.style.display = 'none'; // 스킵 버튼 숨김
+}
+
+// 오프닝 크레딧 재생
+function playStartingCredit() {
+  game.state = CONFIG.STATE.STARTING_CREDIT;
+  showVideo(CONFIG.STARTING_CREDIT_VIDEO);
+  game.skipButton.style.display = 'block'; // 스킵 버튼 표시
+  console.log('오프닝 크레딧 재생 시작');
+}
+
+// 엔딩 크레딧 재생
+function playEndingCredit() {
+  game.state = CONFIG.STATE.ENDING_CREDIT;
+  showVideo(CONFIG.ENDING_CREDIT_VIDEO);
+  console.log('엔딩 크레딧 재생 시작');
 }
 
 // 게임 시작
@@ -229,16 +360,21 @@ function update(deltaTime) {
     const initialSize = game.levelSystem.getCurrentSize();
     game.player.radius = initialSize + (targetSize - initialSize) * progress;
 
-    // 애니메이션 완료 시 승리 화면으로 전환
+    // 애니메이션 완료 시 엔딩 크레딧 재생
     if (progress >= 1) {
-      game.state = CONFIG.STATE.VICTORY;
-      console.log('승리 애니메이션 완료');
+      playEndingCredit();
+      console.log('승리 애니메이션 완료, 엔딩 크레딧 시작');
     }
   }
 }
 
 // 게임 렌더링
 function render() {
+  // 크레딧 재생 중에는 렌더링하지 않음
+  if (game.state === CONFIG.STATE.STARTING_CREDIT || game.state === CONFIG.STATE.ENDING_CREDIT) {
+    return;
+  }
+
   if (game.state === CONFIG.STATE.START) {
     // 시작 화면
     game.ui.drawStartScreen();
