@@ -203,7 +203,13 @@ function init() {
   // 게임 시작 핸들러
   const handleGameStart = () => {
     if (game.state === CONFIG.STATE.START) {
-      playStartingCredit();
+      if (game.mobileControls.isMobile) {
+        // 모바일에서는 시작 동영상 생략하고 바로 게임 시작
+        startGame();
+      } else {
+        // PC에서는 시작 동영상 재생
+        playStartingCredit();
+      }
     }
   };
 
@@ -215,7 +221,7 @@ function init() {
     const handleTouchStart = (e) => {
       if (game.state === CONFIG.STATE.START) {
         game.canvas.removeEventListener('touchstart', handleTouchStart);
-        playStartingCredit();
+        startGame(); // 모바일에서는 바로 게임 시작
       }
     };
     game.canvas.addEventListener('touchstart', handleTouchStart, { once: true });
