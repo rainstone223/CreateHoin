@@ -54,6 +54,16 @@ function init() {
   // 입력 핸들러 초기화
   game.inputHandler = new InputHandler(game.canvas);
 
+  // 필살기 활성화 핸들러 설정
+  game.inputHandler.onUltimateActivate = () => {
+    if (game.state === CONFIG.STATE.PLAYING && game.player) {
+      const activated = game.player.activateUltimate();
+      if (activated) {
+        console.log('필살기 활성화!');
+      }
+    }
+  };
+
   // 레벨 시스템 초기화
   game.levelSystem = new LevelSystem();
 
@@ -245,7 +255,7 @@ function render() {
     );
 
     // HUD 그리기
-    game.ui.drawHUD(game.levelSystem, game.elapsedTime, game.godMode);
+    game.ui.drawHUD(game.levelSystem, game.elapsedTime, game.player, game.godMode);
   } else if (game.state === CONFIG.STATE.VICTORY_ANIMATION) {
     // 승리 애니메이션 화면
     game.renderer.renderFrame(

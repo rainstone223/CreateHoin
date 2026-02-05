@@ -8,95 +8,105 @@ class UI {
 
   // 시작 화면
   drawStartScreen() {
-    this.renderer.drawBackground();
-
-    // 제목 (큰 노란색)
-    this.renderer.drawText(
-      '호인 키우기',
-      CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 - 150,
-      64,
-      '#FFD700',
-      'center',
-      'middle'
-    );
-
-    // 부제목 (흰색)
-    this.renderer.drawText(
-      '작은 호인이 성장하여 최종 단계 "호인"에 도달하세요!',
-      CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 - 80,
-      18,
-      'rgba(255, 255, 255, 0.9)',
-      'center',
-      'middle'
-    );
-
-    // 조작 방법 (밝은 회색)
-    this.renderer.drawText(
-      'WASD 또는 화살표 키로 호인을 조작하세요',
-      CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 - 45,
-      16,
-      'rgba(200, 200, 200, 0.8)',
-      'center',
-      'middle'
-    );
-
-    // 시작 버튼 (초록색, 깜빡임 효과)
-    const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
-    this.renderer.drawText(
-      '클릭하여 시작',
-      CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 + 30,
-      32,
-      `rgba(76, 175, 80, ${pulse})`,
-      'center',
-      'middle'
-    );
-
-    // 엔터키 안내 (작은 텍스트)
-    this.renderer.drawText(
-      '또는 Enter 키를 눌러 시작',
-      CONFIG.CANVAS_WIDTH / 2,
-      CONFIG.CANVAS_HEIGHT / 2 + 65,
-      14,
-      'rgba(150, 150, 150, 0.7)',
-      'center',
-      'middle'
-    );
-
-    // 구분선
     const ctx = this.renderer.ctx;
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(CONFIG.CANVAS_WIDTH / 2 - 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
-    ctx.lineTo(CONFIG.CANVAS_WIDTH / 2 + 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
-    ctx.stroke();
+    const imageLoader = this.renderer.imageLoader;
 
-    // 규칙 (작은 글씨, 정렬)
-    const rules = [
-      '• 초록색 개체를 먹어 성장하세요',
-      '• 빨간색 개체는 피하세요 (게임 오버)',
-      '• 6단계를 거쳐 "호인"이 되면 승리!'
-    ];
+    // 시작 화면 이미지 표시
+    const startImage = imageLoader.images['start-screen'];
+    if (startImage && startImage.complete) {
+      // 캔버스 크기에 맞게 이미지 그리기
+      ctx.drawImage(startImage, 0, 0, CONFIG.CANVAS_WIDTH, CONFIG.CANVAS_HEIGHT);
+    } else {
+      // 이미지 로드 실패 시 기존 UI 사용
+      this.renderer.drawBackground();
 
-    rules.forEach((rule, index) => {
+      // 제목 (큰 노란색)
       this.renderer.drawText(
-        rule,
+        '호인 키우기',
         CONFIG.CANVAS_WIDTH / 2,
-        CONFIG.CANVAS_HEIGHT / 2 + 125 + index * 22,
-        13,
-        'rgba(180, 180, 180, 0.7)',
+        CONFIG.CANVAS_HEIGHT / 2 - 150,
+        64,
+        '#FFD700',
         'center',
         'middle'
       );
-    });
+
+      // 부제목 (흰색)
+      this.renderer.drawText(
+        '작은 호인이 성장하여 최종 단계 "호인"에 도달하세요!',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT / 2 - 80,
+        18,
+        'rgba(255, 255, 255, 0.9)',
+        'center',
+        'middle'
+      );
+
+      // 조작 방법 (밝은 회색)
+      this.renderer.drawText(
+        'WASD 또는 화살표 키로 호인을 조작하세요',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT / 2 - 45,
+        16,
+        'rgba(200, 200, 200, 0.8)',
+        'center',
+        'middle'
+      );
+
+      // 시작 버튼 (초록색, 깜빡임 효과)
+      const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
+      this.renderer.drawText(
+        '클릭하여 시작',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT / 2 + 30,
+        32,
+        `rgba(76, 175, 80, ${pulse})`,
+        'center',
+        'middle'
+      );
+
+      // 엔터키 안내 (작은 텍스트)
+      this.renderer.drawText(
+        '또는 Enter 키를 눌러 시작',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT / 2 + 65,
+        14,
+        'rgba(150, 150, 150, 0.7)',
+        'center',
+        'middle'
+      );
+
+      // 구분선
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(CONFIG.CANVAS_WIDTH / 2 - 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
+      ctx.lineTo(CONFIG.CANVAS_WIDTH / 2 + 200, CONFIG.CANVAS_HEIGHT / 2 + 100);
+      ctx.stroke();
+
+      // 규칙 (작은 글씨, 정렬)
+      const rules = [
+        '• 초록색 개체를 먹어 성장하세요',
+        '• 빨간색 개체는 피하세요 (게임 오버)',
+        '• 6단계를 거쳐 "호인"이 되면 승리!'
+      ];
+
+      rules.forEach((rule, index) => {
+        this.renderer.drawText(
+          rule,
+          CONFIG.CANVAS_WIDTH / 2,
+          CONFIG.CANVAS_HEIGHT / 2 + 125 + index * 22,
+          13,
+          'rgba(180, 180, 180, 0.7)',
+          'center',
+          'middle'
+        );
+      });
+    }
   }
 
   // HUD 그리기
-  drawHUD(levelSystem, elapsedTime, godMode = false) {
+  drawHUD(levelSystem, elapsedTime, player, godMode = false) {
     const ctx = this.renderer.ctx;
 
     // 좌상단: 현재 레벨
@@ -197,6 +207,78 @@ class UI {
       'rgba(255, 255, 255, 0.3)',
       'left',
       'middle'
+    );
+
+    // 필살기 게이지 (하단 중앙)
+    this.drawUltimateGauge(player);
+  }
+
+  // 필살기 게이지 그리기
+  drawUltimateGauge(player) {
+    const ctx = this.renderer.ctx;
+    const gaugeWidth = 200;
+    const gaugeHeight = 20;
+    const gaugeX = (CONFIG.CANVAS_WIDTH - gaugeWidth) / 2;
+    const gaugeY = CONFIG.CANVAS_HEIGHT - 40;
+
+    // 배경 (반투명 검은색)
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.fillRect(gaugeX - 2, gaugeY - 2, gaugeWidth + 4, gaugeHeight + 4);
+
+    // 배경 바
+    ctx.fillStyle = 'rgba(50, 50, 50, 0.8)';
+    ctx.fillRect(gaugeX, gaugeY, gaugeWidth, gaugeHeight);
+
+    // 진행 바
+    const progress = player.getUltimateProgress();
+    const gradient = ctx.createLinearGradient(gaugeX, gaugeY, gaugeX + gaugeWidth, gaugeY);
+
+    if (player.ultimateActive) {
+      // 필살기 활성화 중 - 금색 깜빡임
+      const pulse = Math.sin(Date.now() / 100) * 0.3 + 0.7;
+      gradient.addColorStop(0, `rgba(255, 215, 0, ${pulse})`);
+      gradient.addColorStop(1, `rgba(255, 165, 0, ${pulse})`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(gaugeX, gaugeY, gaugeWidth, gaugeHeight);
+    } else if (player.ultimateReady) {
+      // 필살기 준비 완료 - 밝은 금색 깜빡임
+      const pulse = Math.sin(Date.now() / 200) * 0.2 + 0.8;
+      gradient.addColorStop(0, `rgba(255, 215, 0, ${pulse})`);
+      gradient.addColorStop(1, `rgba(255, 165, 0, ${pulse})`);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(gaugeX, gaugeY, gaugeWidth, gaugeHeight);
+    } else {
+      // 충전 중 - 파란색
+      gradient.addColorStop(0, '#4A90E2');
+      gradient.addColorStop(1, '#2E5C8A');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(gaugeX, gaugeY, (gaugeWidth * progress) / 100, gaugeHeight);
+    }
+
+    // 테두리
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(gaugeX, gaugeY, gaugeWidth, gaugeHeight);
+
+    // 텍스트
+    let gaugeText = '';
+    if (player.ultimateActive) {
+      const remaining = Math.ceil((player.ultimateEndTime - Date.now()) / 1000);
+      gaugeText = `필살기 활성화! (${remaining}초)`;
+    } else if (player.ultimateReady) {
+      gaugeText = '필살기 준비 완료! [Space]';
+    } else {
+      gaugeText = `필살기 충전 중... (${player.preyEatenCount}/${CONFIG.ULTIMATE_PREY_REQUIRED})`;
+    }
+
+    this.renderer.drawText(
+      gaugeText,
+      CONFIG.CANVAS_WIDTH / 2,
+      gaugeY - 8,
+      12,
+      'rgba(255, 255, 255, 0.9)',
+      'center',
+      'bottom'
     );
   }
 

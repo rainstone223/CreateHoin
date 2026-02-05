@@ -34,6 +34,10 @@ const CONFIG = {
   PREDATOR_COUNT_MAX: 4,
   XP_PER_PREY: 10,
 
+  // 필살기 설정
+  ULTIMATE_PREY_REQUIRED: 3, // 필살기 충전에 필요한 먹이 수
+  ULTIMATE_DURATION: 1500, // 필살기 지속 시간 (1.5초)
+
   // AI 행동 설정
   FLEE_DISTANCE: 150,  // 먹이가 도망치기 시작하는 거리
   CHASE_DISTANCE: 200, // 포식자가 추적하기 시작하는 거리

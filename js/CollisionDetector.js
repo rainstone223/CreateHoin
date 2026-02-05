@@ -33,8 +33,9 @@ class CollisionDetector {
       }
     }
 
-    // 포식자와 충돌 체크 (무적 모드가 아닐 때만)
-    if (!godMode) {
+    // 포식자와 충돌 체크 (무적 모드나 필살기 활성화가 아닐 때만)
+    const isInvulnerable = godMode || player.isInvulnerable();
+    if (!isInvulnerable) {
       for (let predator of predatorArray) {
         if (this.circleCollision(
           player.x, player.y, player.radius,

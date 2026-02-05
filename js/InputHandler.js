@@ -15,9 +15,22 @@ class InputHandler {
       ArrowRight: false
     };
 
+    // 필살기 활성화 콜백
+    this.onUltimateActivate = null;
+
     // 키보드 이벤트 리스너
     window.addEventListener('keydown', (e) => {
       const key = e.key.toLowerCase();
+
+      // 스페이스바 처리 (필살기)
+      if (e.key === ' ') {
+        if (this.onUltimateActivate) {
+          this.onUltimateActivate();
+        }
+        e.preventDefault();
+        return;
+      }
+
       if (key in this.keys || e.key in this.keys) {
         this.keys[key in this.keys ? key : e.key] = true;
         e.preventDefault();

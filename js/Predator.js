@@ -14,8 +14,11 @@ class Predator extends Entity {
   update(player, deltaTime) {
     const distance = this.distanceTo(player);
 
+    // 플레이어가 은신 중이면 인지하지 못함
+    const canSeePlayer = !player.isStealthed();
+
     // Phase 4에서 구현할 추적 로직 자리
-    if (distance < CONFIG.CHASE_DISTANCE) {
+    if (canSeePlayer && distance < CONFIG.CHASE_DISTANCE) {
       // 추적 로직 (Phase 4)
       this.chasePlayer(player, deltaTime);
     } else {

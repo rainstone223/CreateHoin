@@ -12,6 +12,12 @@ class ImageLoader {
     // 로드할 이미지 목록
     const imagesToLoad = [];
 
+    // 시작 화면 이미지 (캐시 방지)
+    imagesToLoad.push({
+      key: 'start-screen',
+      src: `assets/start-screen.png?v=${Date.now()}`
+    });
+
     // 플레이어 이미지
     imagesToLoad.push({
       key: 'player',
