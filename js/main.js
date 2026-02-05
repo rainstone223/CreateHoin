@@ -16,6 +16,7 @@ const game = {
   entityManager: null,
   levelSystem: null,
   inputHandler: null,
+  mobileControls: null,
   collisionDetector: null,
   ui: null,
   imageLoader: null,
@@ -54,8 +55,11 @@ function init() {
   // 입력 핸들러 초기화
   game.inputHandler = new InputHandler(game.canvas);
 
-  // 필살기 활성화 핸들러 설정
-  game.inputHandler.onUltimateActivate = () => {
+  // 모바일 컨트롤 초기화
+  game.mobileControls = new MobileControls(game.canvas);
+
+  // 필살기 활성화 핸들러 (공통)
+  const handleUltimateActivate = () => {
     if (game.state === CONFIG.STATE.PLAYING && game.player) {
       const activated = game.player.activateUltimate();
       if (activated) {
@@ -63,6 +67,15 @@ function init() {
       }
     }
   };
+
+  // 키보드 필살기 활성화 핸들러 설정
+  game.inputHandler.onUltimateActivate = handleUltimateActivate;
+
+  // 모바일 필살기 활성화 핸들러 설정
+  game.mobileControls.onUltimateActivate = handleUltimateActivate;
+
+  // InputHandler에 모바일 컨트롤 연결
+  game.inputHandler.setMobileControls(game.mobileControls);
 
   // 레벨 시스템 초기화
   game.levelSystem = new LevelSystem();
@@ -111,19 +124,42 @@ function init() {
   // UI 초기화
   game.ui = new UI(game.renderer);
 
+  // UI에 모바일 컨트롤 연결
+  game.ui.setMobileControls(game.mobileControls);
+
   console.log('게임 초기화 완료');
 
-  // 클릭하면 게임 시작
-  game.canvas.addEventListener('click', startGame, { once: true });
-
-  // 엔터키로도 게임 시작 가능
-  const handleEnterKey = (e) => {
-    if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
-      window.removeEventListener('keydown', handleEnterKey);
+  // 게임 시작 핸들러
+  const handleGameStart = () => {
+    if (game.state === CONFIG.STATE.START) {
       startGame();
     }
   };
-  window.addEventListener('keydown', handleEnterKey);
+
+  // 클릭/터치로 게임 시작
+  game.canvas.addEventListener('click', handleGameStart, { once: true });
+
+  // 모바일에서는 터치로도 시작 가능
+  if (game.mobileControls.isMobile) {
+    const handleTouchStart = (e) => {
+      if (game.state === CONFIG.STATE.START) {
+        game.canvas.removeEventListener('touchstart', handleTouchStart);
+        startGame();
+      }
+    };
+    game.canvas.addEventListener('touchstart', handleTouchStart, { once: true });
+  }
+
+  // 엔터키로도 게임 시작 가능 (PC만)
+  if (!game.mobileControls.isMobile) {
+    const handleEnterKey = (e) => {
+      if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
+        window.removeEventListener('keydown', handleEnterKey);
+        startGame();
+      }
+    };
+    window.addEventListener('keydown', handleEnterKey);
+  }
 
   // 디버그 키 설정
   setupDebugKeys();
@@ -134,6 +170,17 @@ function init() {
 
 // 디버그 키 설정
 function setupDebugKeys() {
+  // 게임 오버/승리 시 재시작 (터치)
+  if (game.mobileControls.isMobile) {
+    game.canvas.addEventListener('touchstart', (e) => {
+      if (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY) {
+        e.preventDefault();
+        location.reload();
+      }
+    });
+  }
+
+  // 키보드 이벤트
   window.addEventListener('keydown', (e) => {
     // 게임 오버/승리 시 엔터키로 재시작
     if (e.key === 'Enter' && (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY)) {

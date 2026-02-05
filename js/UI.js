@@ -4,6 +4,12 @@ class UI {
     this.renderer = renderer;
     this.levelUpNotification = null; // 레벨업 알림
     this.levelUpTime = 0;
+    this.mobileControls = null; // 모바일 컨트롤 참조
+  }
+
+  // 모바일 컨트롤 설정
+  setMobileControls(mobileControls) {
+    this.mobileControls = mobileControls;
   }
 
   // 시작 화면
@@ -42,9 +48,14 @@ class UI {
         'middle'
       );
 
-      // 조작 방법 (밝은 회색)
+      // 조작 방법 (밝은 회색) - 모바일 여부에 따라 다르게 표시
+      const isMobile = this.mobileControls && this.mobileControls.isMobile;
+      const controlText = isMobile
+        ? '조이스틱으로 호인을 조작하세요'
+        : 'WASD 또는 화살표 키로 호인을 조작하세요';
+
       this.renderer.drawText(
-        'WASD 또는 화살표 키로 호인을 조작하세요',
+        controlText,
         CONFIG.CANVAS_WIDTH / 2,
         CONFIG.CANVAS_HEIGHT / 2 - 45,
         16,
@@ -55,8 +66,9 @@ class UI {
 
       // 시작 버튼 (초록색, 깜빡임 효과)
       const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
+      const startText = isMobile ? '화면을 터치하여 시작' : '클릭하여 시작';
       this.renderer.drawText(
-        '클릭하여 시작',
+        startText,
         CONFIG.CANVAS_WIDTH / 2,
         CONFIG.CANVAS_HEIGHT / 2 + 30,
         32,
@@ -65,16 +77,18 @@ class UI {
         'middle'
       );
 
-      // 엔터키 안내 (작은 텍스트)
-      this.renderer.drawText(
-        '또는 Enter 키를 눌러 시작',
-        CONFIG.CANVAS_WIDTH / 2,
-        CONFIG.CANVAS_HEIGHT / 2 + 65,
-        14,
-        'rgba(150, 150, 150, 0.7)',
-        'center',
-        'middle'
-      );
+      // 엔터키 안내 (작은 텍스트) - 모바일이 아닐 때만
+      if (!isMobile) {
+        this.renderer.drawText(
+          '또는 Enter 키를 눌러 시작',
+          CONFIG.CANVAS_WIDTH / 2,
+          CONFIG.CANVAS_HEIGHT / 2 + 65,
+          14,
+          'rgba(150, 150, 150, 0.7)',
+          'center',
+          'middle'
+        );
+      }
 
       // 구분선
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -209,8 +223,16 @@ class UI {
       'middle'
     );
 
-    // 필살기 게이지 (하단 중앙)
-    this.drawUltimateGauge(player);
+    // 필살기 게이지 (하단 중앙) - 모바일이 아닐 때만
+    const isMobile = this.mobileControls && this.mobileControls.isMobile;
+    if (!isMobile) {
+      this.drawUltimateGauge(player);
+    }
+
+    // 모바일 컨트롤 그리기
+    if (this.mobileControls && this.mobileControls.isMobile) {
+      this.mobileControls.draw(this.renderer.ctx);
+    }
   }
 
   // 필살기 게이지 그리기
@@ -340,9 +362,11 @@ class UI {
       'middle'
     );
 
-    // 재시작 안내
+    // 재시작 안내 - 모바일 여부에 따라 다르게 표시
+    const isMobile = this.mobileControls && this.mobileControls.isMobile;
+    const restartText = isMobile ? '화면을 터치하여 재시작' : 'Enter를 눌러 재시작';
     this.renderer.drawText(
-      'Enter를 눌러 재시작',
+      restartText,
       CONFIG.CANVAS_WIDTH / 2,
       CONFIG.CANVAS_HEIGHT / 2 + 120,
       22,
@@ -403,9 +427,11 @@ class UI {
       'middle'
     );
 
-    // 재시작 안내
+    // 재시작 안내 - 모바일 여부에 따라 다르게 표시
+    const isMobile = this.mobileControls && this.mobileControls.isMobile;
+    const restartText = isMobile ? '화면을 터치하여 다시 플레이' : 'Enter를 눌러 다시 플레이';
     this.renderer.drawText(
-      'Enter를 눌러 다시 플레이',
+      restartText,
       CONFIG.CANVAS_WIDTH / 2,
       CONFIG.CANVAS_HEIGHT / 2 + 120,
       20,
