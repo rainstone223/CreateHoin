@@ -55,27 +55,14 @@ function init() {
     // 실제 화면 크기 감지
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    const availableWidth = screenWidth * 0.95;  // 화면의 95% 사용
-    const availableHeight = screenHeight * 0.95;
 
-    // 16:9 비율 유지하면서 화면에 맞추기
-    const aspectRatio = 16 / 9;
-    let canvasWidth, canvasHeight;
-    const widthBasedHeight = availableWidth / aspectRatio;
+    // 화면의 98% 사용 (비율 고정 없이 최대한 활용)
+    let canvasWidth = Math.floor(screenWidth * 0.98);
+    let canvasHeight = Math.floor(screenHeight * 0.98);
 
-    if (widthBasedHeight <= availableHeight) {
-      // 너비가 제한 요소
-      canvasWidth = Math.floor(availableWidth);
-      canvasHeight = Math.floor(widthBasedHeight);
-    } else {
-      // 높이가 제한 요소
-      canvasHeight = Math.floor(availableHeight);
-      canvasWidth = Math.floor(canvasHeight * aspectRatio);
-    }
-
-    // 크기 제한 적용 (최소 400x225, 최대 1920x1080)
+    // 크기 제한 적용 (최소 400x300, 최대 1920x1080)
     canvasWidth = Math.max(400, Math.min(1920, canvasWidth));
-    canvasHeight = Math.max(225, Math.min(1080, canvasHeight));
+    canvasHeight = Math.max(300, Math.min(1080, canvasHeight));
 
     // 캔버스 크기 설정
     game.canvas.width = canvasWidth;

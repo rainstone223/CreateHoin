@@ -23,6 +23,22 @@ body {
   height: 600px;
 }
 
+/* 모바일에서는 전체 화면 사용 */
+@media (max-width: 1200px) {
+  body {
+    background: #1a1a2e; /* 단색 배경으로 변경 */
+    padding: 0;
+    margin: 0;
+  }
+
+  #game-container {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 #gameCanvas {
   display: block;
   background: #1a1a2e;
