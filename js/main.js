@@ -47,19 +47,45 @@ function init() {
     return;
   }
 
-  // 모바일 감지 및 캔버스 크기 조정 (16:9)
+  // 모바일 감지 및 캔버스 크기 조정
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                    (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
 
   if (isMobile) {
-    // 모바일: 16:9 비율 (1067x600)
-    const mobileWidth = Math.round(CONFIG.CANVAS_HEIGHT * 16 / 9);
-    game.canvas.width = mobileWidth;
-    CONFIG.CANVAS_WIDTH = mobileWidth;
+    // 실제 화면 크기 감지
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const availableWidth = screenWidth * 0.95;  // 화면의 95% 사용
+    const availableHeight = screenHeight * 0.95;
+
+    // 16:9 비율 유지하면서 화면에 맞추기
+    const aspectRatio = 16 / 9;
+    let canvasWidth, canvasHeight;
+    const widthBasedHeight = availableWidth / aspectRatio;
+
+    if (widthBasedHeight <= availableHeight) {
+      // 너비가 제한 요소
+      canvasWidth = Math.floor(availableWidth);
+      canvasHeight = Math.floor(widthBasedHeight);
+    } else {
+      // 높이가 제한 요소
+      canvasHeight = Math.floor(availableHeight);
+      canvasWidth = Math.floor(canvasHeight * aspectRatio);
+    }
+
+    // 크기 제한 적용 (최소 400x225, 최대 1920x1080)
+    canvasWidth = Math.max(400, Math.min(1920, canvasWidth));
+    canvasHeight = Math.max(225, Math.min(1080, canvasHeight));
+
+    // 캔버스 크기 설정
+    game.canvas.width = canvasWidth;
+    game.canvas.height = canvasHeight;
+    CONFIG.CANVAS_WIDTH = canvasWidth;
+    CONFIG.CANVAS_HEIGHT = canvasHeight;
 
     // 화면 면적 비율 계산 (PC 대비)
     const pcArea = 800 * 600;
-    const mobileArea = mobileWidth * CONFIG.CANVAS_HEIGHT;
+    const mobileArea = canvasWidth * canvasHeight;
     const areaRatio = mobileArea / pcArea;
 
     // 개체 크기 스케일 팩터 (면적의 제곱근)
@@ -83,9 +109,11 @@ function init() {
     CONFIG.PREY_COUNT_MAX = Math.round(CONFIG.PREY_COUNT_MAX * countScale);
     CONFIG.PREDATOR_COUNT_MAX = Math.round(CONFIG.PREDATOR_COUNT_MAX * countScale);
 
-    console.log(`모바일 모드: 캔버스 크기 ${mobileWidth}x${CONFIG.CANVAS_HEIGHT}, 크기 스케일 ${sizeScale.toFixed(2)}, 개체 수 스케일 ${countScale.toFixed(2)}`);
+    console.log(`모바일 모드: 화면 ${screenWidth}x${screenHeight}, 캔버스 ${canvasWidth}x${canvasHeight}, 크기 스케일 ${sizeScale.toFixed(2)}, 개체 수 스케일 ${countScale.toFixed(2)}`);
   } else {
     // PC: 기본 크기 유지 (800x600)
+    game.canvas.width = CONFIG.CANVAS_WIDTH;
+    game.canvas.height = CONFIG.CANVAS_HEIGHT;
     CONFIG.SIZE_SCALE = 1.0;
     console.log('PC 모드: 캔버스 크기 800x600');
   }
