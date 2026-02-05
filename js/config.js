@@ -71,7 +71,7 @@ const CONFIG = {
 
   // 하드 모드 설정
   HARD_MODE: {
-    PREDATOR_SPEED_MULTIPLIER: 1.15, // 포식자 속도 15% 증가 (플레이어보다는 여전히 느림)
+    PREDATOR_SPEED_MULTIPLIER: 1.0, // 포식자 속도 (이지모드와 동일)
     DOCUMENT_THROW_INTERVAL: 2000, // 2초마다 서류 던지기 (밀리초)
     DOCUMENT_SPEED: 3.5, // 서류 속도
     DOCUMENT_SIZE: 18, // 서류 크기 (사원 크기)
