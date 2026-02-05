@@ -12,6 +12,158 @@ class UI {
     this.mobileControls = mobileControls;
   }
 
+  // 난이도 선택 화면
+  drawDifficultyScreen(selectedIndex = 0) {
+    const ctx = this.renderer.ctx;
+    this.renderer.drawBackground();
+
+    // 제목
+    this.renderer.drawText(
+      '난이도 선택',
+      CONFIG.CANVAS_WIDTH / 2,
+      CONFIG.CANVAS_HEIGHT / 2 - 150,
+      48,
+      '#FFD700',
+      'center',
+      'middle'
+    );
+
+    const buttonWidth = 300;
+    const buttonHeight = 60;
+
+    // 이지 모드 버튼
+    const easyButtonY = CONFIG.CANVAS_HEIGHT / 2 - 20;
+    const easyButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+    const easySelected = selectedIndex === 0;
+
+    // 이지 모드 - 선택 상태에 따라 스타일 변경
+    if (easySelected) {
+      // 선택됨 - 밝고 두꺼운 테두리
+      ctx.fillStyle = 'rgba(76, 175, 80, 1.0)';
+      ctx.fillRect(easyButtonX, easyButtonY, buttonWidth, buttonHeight);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 1.0)';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(easyButtonX, easyButtonY, buttonWidth, buttonHeight);
+
+      // 선택 표시 화살표
+      this.renderer.drawText(
+        '▶',
+        easyButtonX - 30,
+        easyButtonY + buttonHeight / 2,
+        32,
+        '#FFD700',
+        'right',
+        'middle'
+      );
+    } else {
+      // 선택 안됨
+      ctx.fillStyle = 'rgba(76, 175, 80, 0.6)';
+      ctx.fillRect(easyButtonX, easyButtonY, buttonWidth, buttonHeight);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(easyButtonX, easyButtonY, buttonWidth, buttonHeight);
+    }
+
+    this.renderer.drawText(
+      '이지 모드',
+      CONFIG.CANVAS_WIDTH / 2,
+      easyButtonY + buttonHeight / 2,
+      28,
+      'white',
+      'center',
+      'middle'
+    );
+
+    // 이지 모드 설명
+    this.renderer.drawText(
+      '기본 난이도',
+      CONFIG.CANVAS_WIDTH / 2,
+      easyButtonY + buttonHeight + 15,
+      14,
+      easySelected ? 'rgba(255, 255, 255, 1.0)' : 'rgba(200, 200, 200, 0.8)',
+      'center',
+      'middle'
+    );
+
+    // 하드 모드 버튼
+    const hardButtonY = CONFIG.CANVAS_HEIGHT / 2 + 80;
+    const hardButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+    const hardSelected = selectedIndex === 1;
+
+    // 하드 모드 - 선택 상태에 따라 스타일 변경
+    if (hardSelected) {
+      // 선택됨 - 밝고 두꺼운 테두리
+      ctx.fillStyle = 'rgba(231, 76, 60, 1.0)';
+      ctx.fillRect(hardButtonX, hardButtonY, buttonWidth, buttonHeight);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 1.0)';
+      ctx.lineWidth = 5;
+      ctx.strokeRect(hardButtonX, hardButtonY, buttonWidth, buttonHeight);
+
+      // 선택 표시 화살표
+      this.renderer.drawText(
+        '▶',
+        hardButtonX - 30,
+        hardButtonY + buttonHeight / 2,
+        32,
+        '#FFD700',
+        'right',
+        'middle'
+      );
+    } else {
+      // 선택 안됨
+      ctx.fillStyle = 'rgba(231, 76, 60, 0.6)';
+      ctx.fillRect(hardButtonX, hardButtonY, buttonWidth, buttonHeight);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(hardButtonX, hardButtonY, buttonWidth, buttonHeight);
+    }
+
+    this.renderer.drawText(
+      '하드 모드',
+      CONFIG.CANVAS_WIDTH / 2,
+      hardButtonY + buttonHeight / 2,
+      28,
+      'white',
+      'center',
+      'middle'
+    );
+
+    // 하드 모드 설명
+    this.renderer.drawText(
+      '포식자 강화 / 서류 공격 / 먹이 패턴 추가',
+      CONFIG.CANVAS_WIDTH / 2,
+      hardButtonY + buttonHeight + 15,
+      14,
+      hardSelected ? 'rgba(255, 255, 255, 1.0)' : 'rgba(200, 200, 200, 0.8)',
+      'center',
+      'middle'
+    );
+
+    // 조작 안내
+    const isMobile = this.mobileControls && this.mobileControls.isMobile;
+    if (!isMobile) {
+      this.renderer.drawText(
+        '↑↓ 또는 W/S: 선택 이동 | Enter/Space: 확정',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT - 40,
+        14,
+        'rgba(200, 200, 200, 0.7)',
+        'center',
+        'middle'
+      );
+    } else {
+      this.renderer.drawText(
+        '터치하여 선택',
+        CONFIG.CANVAS_WIDTH / 2,
+        CONFIG.CANVAS_HEIGHT - 40,
+        14,
+        'rgba(200, 200, 200, 0.7)',
+        'center',
+        'middle'
+      );
+    }
+  }
+
   // 시작 화면
   drawStartScreen() {
     const ctx = this.renderer.ctx;

@@ -17,7 +17,7 @@ class CollisionDetector {
   }
 
   // 모든 충돌 체크
-  checkCollisions(player, preyArray, predatorArray, godMode = false) {
+  checkCollisions(player, preyArray, predatorArray, godMode = false, documentArray = []) {
     // 먹이와 충돌 체크
     for (let i = preyArray.length - 1; i >= 0; i--) {
       const prey = preyArray[i];
@@ -46,6 +46,22 @@ class CollisionDetector {
             this.onGameOver();
           }
           return; // 게임 오버이므로 더 이상 체크 안 함
+        }
+      }
+
+      // 서류와 충돌 체크 (하드모드 전용)
+      if (CONFIG.DIFFICULTY === 'HARD') {
+        for (let document of documentArray) {
+          if (this.circleCollision(
+            player.x, player.y, player.radius,
+            document.x, document.y, document.radius
+          )) {
+            // 플레이어가 서류에 맞음 - 게임 오버
+            if (this.onGameOver) {
+              this.onGameOver();
+            }
+            return; // 게임 오버이므로 더 이상 체크 안 함
+          }
         }
       }
     }

@@ -6,10 +6,13 @@ const game = {
   renderer: null,
 
   // 게임 상태
-  state: CONFIG.STATE.START,
+  state: CONFIG.STATE.START, // 시작 화면부터 시작
   startTime: null,
   lastFrameTime: 0,
   deltaTime: 0,
+
+  // 난이도 선택 UI 상태
+  selectedDifficulty: 0, // 0: Easy, 1: Hard
 
   // 게임 객체 (나중에 초기화)
   player: null,
@@ -200,12 +203,124 @@ function init() {
 
   console.log('게임 초기화 완료');
 
+  // 난이도 선택 완료 함수
+  const confirmDifficulty = () => {
+    if (game.selectedDifficulty === 0) {
+      CONFIG.DIFFICULTY = 'EASY';
+      console.log('이지 모드 선택됨');
+    } else {
+      CONFIG.DIFFICULTY = 'HARD';
+      console.log('하드 모드 선택됨');
+    }
+    startGame(); // 바로 게임 시작
+  };
+
+  // 난이도 선택 키보드 핸들러
+  const handleDifficultyKeyboard = (e) => {
+    if (game.state !== 'DIFFICULTY_SELECT') return;
+
+    switch (e.key) {
+      case 'ArrowUp':
+      case 'w':
+      case 'W':
+        e.preventDefault();
+        game.selectedDifficulty = 0; // Easy
+        break;
+      case 'ArrowDown':
+      case 's':
+      case 'S':
+        e.preventDefault();
+        game.selectedDifficulty = 1; // Hard
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        confirmDifficulty();
+        break;
+    }
+  };
+
+  // 난이도 선택 마우스 클릭 핸들러
+  const handleDifficultyClick = (e) => {
+    if (game.state !== 'DIFFICULTY_SELECT') return;
+
+    const rect = game.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // 버튼 영역 계산 (drawDifficultyScreen과 동일)
+    const buttonWidth = 300;
+    const buttonHeight = 60;
+    const easyButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+    const easyButtonY = CONFIG.CANVAS_HEIGHT / 2 - 20;
+    const hardButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+    const hardButtonY = CONFIG.CANVAS_HEIGHT / 2 + 80;
+
+    // 이지 모드 버튼 클릭
+    if (x >= easyButtonX && x <= easyButtonX + buttonWidth &&
+        y >= easyButtonY && y <= easyButtonY + buttonHeight) {
+      game.selectedDifficulty = 0;
+      confirmDifficulty();
+      return;
+    }
+
+    // 하드 모드 버튼 클릭
+    if (x >= hardButtonX && x <= hardButtonX + buttonWidth &&
+        y >= hardButtonY && y <= hardButtonY + buttonHeight) {
+      game.selectedDifficulty = 1;
+      confirmDifficulty();
+      return;
+    }
+  };
+
+  // 난이도 선택 이벤트 리스너
+  window.addEventListener('keydown', handleDifficultyKeyboard);
+  game.canvas.addEventListener('click', handleDifficultyClick);
+
+  // 모바일 터치 지원
+  if (game.mobileControls.isMobile) {
+    game.canvas.addEventListener('touchstart', (e) => {
+      if (game.state !== 'DIFFICULTY_SELECT') return;
+      e.preventDefault();
+
+      const touch = e.touches[0];
+      const rect = game.canvas.getBoundingClientRect();
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+
+      // 버튼 영역 계산
+      const buttonWidth = 300;
+      const buttonHeight = 60;
+      const easyButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+      const easyButtonY = CONFIG.CANVAS_HEIGHT / 2 - 20;
+      const hardButtonX = CONFIG.CANVAS_WIDTH / 2 - buttonWidth / 2;
+      const hardButtonY = CONFIG.CANVAS_HEIGHT / 2 + 80;
+
+      // 이지 모드 버튼 터치
+      if (x >= easyButtonX && x <= easyButtonX + buttonWidth &&
+          y >= easyButtonY && y <= easyButtonY + buttonHeight) {
+        game.selectedDifficulty = 0;
+        confirmDifficulty();
+        return;
+      }
+
+      // 하드 모드 버튼 터치
+      if (x >= hardButtonX && x <= hardButtonX + buttonWidth &&
+          y >= hardButtonY && y <= hardButtonY + buttonHeight) {
+        game.selectedDifficulty = 1;
+        confirmDifficulty();
+        return;
+      }
+    });
+  }
+
   // 게임 시작 핸들러
   const handleGameStart = () => {
     if (game.state === CONFIG.STATE.START) {
       if (game.mobileControls.isMobile) {
-        // 모바일에서는 시작 동영상 생략하고 바로 게임 시작
-        startGame();
+        // 모바일에서는 시작 동영상 생략하고 바로 난이도 선택 화면으로
+        game.state = 'DIFFICULTY_SELECT';
+        console.log('모바일: 난이도 선택 화면으로 이동');
       } else {
         // PC에서는 시작 동영상 재생
         playStartingCredit();
@@ -214,24 +329,24 @@ function init() {
   };
 
   // 클릭/터치로 게임 시작
-  game.canvas.addEventListener('click', handleGameStart, { once: true });
+  game.canvas.addEventListener('click', handleGameStart);
 
   // 모바일에서는 터치로도 시작 가능
   if (game.mobileControls.isMobile) {
-    const handleTouchStart = (e) => {
+    game.canvas.addEventListener('touchstart', (e) => {
       if (game.state === CONFIG.STATE.START) {
-        game.canvas.removeEventListener('touchstart', handleTouchStart);
-        startGame(); // 모바일에서는 바로 게임 시작
+        e.preventDefault();
+        // 모바일에서는 시작 동영상 생략하고 바로 난이도 선택 화면으로
+        game.state = 'DIFFICULTY_SELECT';
+        console.log('모바일: 난이도 선택 화면으로 이동');
       }
-    };
-    game.canvas.addEventListener('touchstart', handleTouchStart, { once: true });
+    });
   }
 
   // 엔터키로도 게임 시작 가능 (PC만)
   if (!game.mobileControls.isMobile) {
     const handleEnterKey = (e) => {
       if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
-        window.removeEventListener('keydown', handleEnterKey);
         playStartingCredit();
       }
     };
@@ -300,9 +415,10 @@ function setupCreditVideo() {
   // 비디오 종료 이벤트
   video.addEventListener('ended', () => {
     if (game.state === CONFIG.STATE.STARTING_CREDIT) {
-      // 오프닝 크레딧 끝나면 게임 시작
+      // 오프닝 크레딧 끝나면 난이도 선택 화면으로
       hideVideo();
-      startGame();
+      game.state = 'DIFFICULTY_SELECT';
+      console.log('난이도 선택 화면으로 이동');
     } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
       // 엔딩 크레딧 끝나면 승리 화면
       hideVideo();
@@ -336,8 +452,8 @@ function skipVideo() {
   // 상태에 따라 다음 단계로 진행
   if (game.state === CONFIG.STATE.STARTING_CREDIT) {
     hideVideo();
-    startGame();
-    console.log('오프닝 크레딧 스킵됨');
+    game.state = 'DIFFICULTY_SELECT';
+    console.log('오프닝 크레딧 스킵됨, 난이도 선택 화면으로 이동');
   } else if (game.state === CONFIG.STATE.ENDING_CREDIT) {
     hideVideo();
     game.state = CONFIG.STATE.VICTORY;
@@ -462,7 +578,8 @@ function update(deltaTime) {
       game.player,
       game.entityManager.preyArray,
       game.entityManager.predatorArray,
-      game.godMode
+      game.godMode,
+      game.entityManager.documentArray
     );
   } else if (game.state === CONFIG.STATE.VICTORY_ANIMATION) {
     // 승리 애니메이션 업데이트
@@ -489,7 +606,10 @@ function render() {
     return;
   }
 
-  if (game.state === CONFIG.STATE.START) {
+  if (game.state === 'DIFFICULTY_SELECT') {
+    // 난이도 선택 화면 (선택된 항목 전달)
+    game.ui.drawDifficultyScreen(game.selectedDifficulty);
+  } else if (game.state === CONFIG.STATE.START) {
     // 시작 화면
     game.ui.drawStartScreen();
   } else if (game.state === CONFIG.STATE.PLAYING) {
@@ -501,7 +621,8 @@ function render() {
       game.levelSystem,
       game.elapsedTime,
       game.state,
-      game.godMode
+      game.godMode,
+      game.entityManager.documentArray
     );
 
     // HUD 그리기
@@ -515,7 +636,8 @@ function render() {
       game.levelSystem,
       game.elapsedTime,
       game.state,
-      game.godMode
+      game.godMode,
+      game.entityManager.documentArray
     );
   } else if (game.state === CONFIG.STATE.GAMEOVER) {
     // 게임 오버 화면

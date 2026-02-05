@@ -64,5 +64,17 @@ const CONFIG = {
 
   // 크레딧 영상 경로
   STARTING_CREDIT_VIDEO: 'assets/startingcredit.mp4',
-  ENDING_CREDIT_VIDEO: 'assets/ending_credit.mp4'
+  ENDING_CREDIT_VIDEO: 'assets/ending_credit.mp4',
+
+  // 난이도 설정
+  DIFFICULTY: 'EASY', // 'EASY' 또는 'HARD'
+
+  // 하드 모드 설정
+  HARD_MODE: {
+    PREDATOR_SPEED_MULTIPLIER: 1.15, // 포식자 속도 15% 증가 (플레이어보다는 여전히 느림)
+    DOCUMENT_THROW_INTERVAL: 2000, // 2초마다 서류 던지기 (밀리초)
+    DOCUMENT_SPEED: 3.5, // 서류 속도
+    DOCUMENT_SIZE: 18, // 서류 크기 (사원 크기)
+    PREY_HIDE_BEHIND_PREDATOR_CHANCE: 0.2 // 먹이가 포식자 뒤로 숨을 확률 (20%)
+  }
 };

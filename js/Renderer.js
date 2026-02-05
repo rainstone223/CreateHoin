@@ -231,8 +231,43 @@ class Renderer {
     this.ctx.globalAlpha = 1;
   }
 
+  // 서류 그리기 (하드모드 전용)
+  drawDocument(document) {
+    // 서류는 회색 사각형으로 표시
+    this.ctx.save();
+    this.ctx.translate(document.x, document.y);
+
+    // 서류 회전 (날아가는 방향으로)
+    const angle = Math.atan2(document.vy, document.vx);
+    this.ctx.rotate(angle);
+
+    // 사각형 그리기 (폭이 더 넓은 직사각형)
+    const width = document.radius * 1.5;
+    const height = document.radius;
+    this.ctx.fillStyle = '#CCCCCC';
+    this.ctx.fillRect(-width / 2, -height / 2, width, height);
+
+    // 테두리
+    this.ctx.strokeStyle = 'rgba(100, 100, 100, 0.8)';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(-width / 2, -height / 2, width, height);
+
+    // 서류 무늬 (선 몇 개)
+    this.ctx.strokeStyle = 'rgba(80, 80, 80, 0.5)';
+    this.ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      const y = -height / 4 + (i * height / 4);
+      this.ctx.beginPath();
+      this.ctx.moveTo(-width / 3, y);
+      this.ctx.lineTo(width / 3, y);
+      this.ctx.stroke();
+    }
+
+    this.ctx.restore();
+  }
+
   // 전체 프레임 렌더링
-  renderFrame(player, preyArray, predatorArray, levelSystem, elapsedTime, gameState, godMode = false) {
+  renderFrame(player, preyArray, predatorArray, levelSystem, elapsedTime, gameState, godMode = false, documentArray = []) {
     // 배경 그리기
     this.drawBackground();
 
@@ -247,6 +282,13 @@ class Renderer {
       predatorArray.forEach(predator => {
         this.drawEntity(predator, CONFIG.PREDATOR_COLOR);
       });
+
+      // 서류 그리기 (하드모드 전용)
+      if (CONFIG.DIFFICULTY === 'HARD') {
+        documentArray.forEach(document => {
+          this.drawDocument(document);
+        });
+      }
 
       // 플레이어 그리기
       const isHoin = levelSystem.currentLevel === 5; // 인덱스 5 = 호인

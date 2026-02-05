@@ -3,6 +3,7 @@ class EntityManager {
   constructor() {
     this.preyArray = [];
     this.predatorArray = [];
+    this.documentArray = []; // 하드모드용 서류 배열
   }
 
   // 플레이어 레벨에 따른 포식자 수 결정
@@ -102,15 +103,33 @@ class EntityManager {
 
   // 모든 개체 업데이트
   updateAll(player, deltaTime) {
-    // 먹이 업데이트
+    // 먹이 업데이트 (하드모드에서는 포식자 배열 전달)
     this.preyArray.forEach(prey => {
-      prey.update(player, deltaTime);
+      if (CONFIG.DIFFICULTY === 'HARD') {
+        prey.update(player, deltaTime, this.predatorArray);
+      } else {
+        prey.update(player, deltaTime);
+      }
     });
 
-    // 포식자 업데이트
+    // 포식자 업데이트 (하드모드에서는 EntityManager 전달)
     this.predatorArray.forEach(predator => {
-      predator.update(player, deltaTime);
+      if (CONFIG.DIFFICULTY === 'HARD') {
+        predator.update(player, deltaTime, this);
+      } else {
+        predator.update(player, deltaTime);
+      }
     });
+
+    // 서류 업데이트 (하드모드 전용)
+    if (CONFIG.DIFFICULTY === 'HARD') {
+      this.documentArray.forEach(doc => {
+        doc.update(deltaTime);
+      });
+
+      // 화면 밖으로 나간 서류 제거
+      this.documentArray = this.documentArray.filter(doc => !doc.isOutOfBounds());
+    }
   }
 
   // 먹이 제거 및 리스폰
@@ -171,5 +190,11 @@ class EntityManager {
       // 수는 맞지만 약한 포식자를 교체한 경우
       console.log(`약한 포식자 ${removedCount}마리 교체`);
     }
+  }
+
+  // 서류 던지기 (하드모드 전용)
+  throwDocument(fromX, fromY, targetX, targetY) {
+    const document = new Document(fromX, fromY, targetX, targetY);
+    this.documentArray.push(document);
   }
 }
