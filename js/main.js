@@ -16,6 +16,7 @@ const game = {
   entityManager: null,
   levelSystem: null,
   inputHandler: null,
+  mobileControls: null,
   collisionDetector: null,
   ui: null,
   imageLoader: null,
@@ -46,6 +47,49 @@ function init() {
     return;
   }
 
+  // 모바일 감지 및 캔버스 크기 조정 (16:9)
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                   (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+
+  if (isMobile) {
+    // 모바일: 16:9 비율 (1067x600)
+    const mobileWidth = Math.round(CONFIG.CANVAS_HEIGHT * 16 / 9);
+    game.canvas.width = mobileWidth;
+    CONFIG.CANVAS_WIDTH = mobileWidth;
+
+    // 화면 면적 비율 계산 (PC 대비)
+    const pcArea = 800 * 600;
+    const mobileArea = mobileWidth * CONFIG.CANVAS_HEIGHT;
+    const areaRatio = mobileArea / pcArea;
+
+    // 개체 크기 스케일 팩터 (면적의 제곱근)
+    const sizeScale = Math.sqrt(areaRatio);
+    CONFIG.SIZE_SCALE = sizeScale;
+
+    // 모든 레벨의 크기를 스케일 조정
+    CONFIG.LEVELS.forEach(level => {
+      level.size = Math.round(level.size * sizeScale);
+    });
+
+    // 거리 관련 값도 스케일 조정
+    CONFIG.FLEE_DISTANCE = Math.round(CONFIG.FLEE_DISTANCE * sizeScale);
+    CONFIG.CHASE_DISTANCE = Math.round(CONFIG.CHASE_DISTANCE * sizeScale);
+    CONFIG.MIN_SPAWN_DISTANCE = Math.round(CONFIG.MIN_SPAWN_DISTANCE * sizeScale);
+    CONFIG.MAX_SIZE = CONFIG.LEVELS[CONFIG.LEVELS.length - 1].size;
+
+    // 개체 수도 면적 비율에 맞춰 조정 (약간만 증가)
+    const countScale = Math.min(1.3, Math.sqrt(areaRatio));
+    CONFIG.PREY_COUNT_MIN = Math.round(CONFIG.PREY_COUNT_MIN * countScale);
+    CONFIG.PREY_COUNT_MAX = Math.round(CONFIG.PREY_COUNT_MAX * countScale);
+    CONFIG.PREDATOR_COUNT_MAX = Math.round(CONFIG.PREDATOR_COUNT_MAX * countScale);
+
+    console.log(`모바일 모드: 캔버스 크기 ${mobileWidth}x${CONFIG.CANVAS_HEIGHT}, 크기 스케일 ${sizeScale.toFixed(2)}, 개체 수 스케일 ${countScale.toFixed(2)}`);
+  } else {
+    // PC: 기본 크기 유지 (800x600)
+    CONFIG.SIZE_SCALE = 1.0;
+    console.log('PC 모드: 캔버스 크기 800x600');
+  }
+
   // ImageLoader 초기화 및 이미지 로드
   game.imageLoader = new ImageLoader();
   game.imageLoader.loadAll(() => {
@@ -58,8 +102,11 @@ function init() {
   // 입력 핸들러 초기화
   game.inputHandler = new InputHandler(game.canvas);
 
-  // 필살기 활성화 핸들러 설정
-  game.inputHandler.onUltimateActivate = () => {
+  // 모바일 컨트롤 초기화
+  game.mobileControls = new MobileControls(game.canvas);
+
+  // 필살기 활성화 핸들러 (공통)
+  const handleUltimateActivate = () => {
     if (game.state === CONFIG.STATE.PLAYING && game.player) {
       const activated = game.player.activateUltimate();
       if (activated) {
@@ -67,6 +114,15 @@ function init() {
       }
     }
   };
+
+  // 키보드 필살기 활성화 핸들러 설정
+  game.inputHandler.onUltimateActivate = handleUltimateActivate;
+
+  // 모바일 필살기 활성화 핸들러 설정
+  game.mobileControls.onUltimateActivate = handleUltimateActivate;
+
+  // InputHandler에 모바일 컨트롤 연결
+  game.inputHandler.setMobileControls(game.mobileControls);
 
   // 레벨 시스템 초기화
   game.levelSystem = new LevelSystem();
@@ -115,6 +171,9 @@ function init() {
   // UI 초기화
   game.ui = new UI(game.renderer);
 
+  // UI에 모바일 컨트롤 연결
+  game.ui.setMobileControls(game.mobileControls);
+
   // 크레딧 비디오 초기화
   game.creditVideo = document.getElementById('creditVideo');
   game.skipButton = document.getElementById('skipButton');
@@ -123,17 +182,37 @@ function init() {
 
   console.log('게임 초기화 완료');
 
-  // 클릭하면 게임 시작 (오프닝 크레딧 재생)
-  game.canvas.addEventListener('click', playStartingCredit, { once: true });
-
-  // 엔터키로도 게임 시작 가능
-  const handleEnterKey = (e) => {
-    if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
-      window.removeEventListener('keydown', handleEnterKey);
+  // 게임 시작 핸들러
+  const handleGameStart = () => {
+    if (game.state === CONFIG.STATE.START) {
       playStartingCredit();
     }
   };
-  window.addEventListener('keydown', handleEnterKey);
+
+  // 클릭/터치로 게임 시작
+  game.canvas.addEventListener('click', handleGameStart, { once: true });
+
+  // 모바일에서는 터치로도 시작 가능
+  if (game.mobileControls.isMobile) {
+    const handleTouchStart = (e) => {
+      if (game.state === CONFIG.STATE.START) {
+        game.canvas.removeEventListener('touchstart', handleTouchStart);
+        playStartingCredit();
+      }
+    };
+    game.canvas.addEventListener('touchstart', handleTouchStart, { once: true });
+  }
+
+  // 엔터키로도 게임 시작 가능 (PC만)
+  if (!game.mobileControls.isMobile) {
+    const handleEnterKey = (e) => {
+      if (e.key === 'Enter' && game.state === CONFIG.STATE.START) {
+        window.removeEventListener('keydown', handleEnterKey);
+        playStartingCredit();
+      }
+    };
+    window.addEventListener('keydown', handleEnterKey);
+  }
 
   // 디버그 키 설정
   setupDebugKeys();
@@ -144,6 +223,17 @@ function init() {
 
 // 디버그 키 설정
 function setupDebugKeys() {
+  // 게임 오버/승리 시 재시작 (터치)
+  if (game.mobileControls.isMobile) {
+    game.canvas.addEventListener('touchstart', (e) => {
+      if (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY) {
+        e.preventDefault();
+        location.reload();
+      }
+    });
+  }
+
+  // 키보드 이벤트
   window.addEventListener('keydown', (e) => {
     // 게임 오버/승리 시 엔터키로 재시작
     if (e.key === 'Enter' && (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY)) {

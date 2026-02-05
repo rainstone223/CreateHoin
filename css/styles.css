@@ -26,7 +26,11 @@ body {
 #gameCanvas {
   display: block;
   background: #1a1a2e;
-  cursor: default;
+  cursor: default; /* 키보드 조작이므로 커서 표시 */
+  touch-action: none; /* 모바일 터치 제스처 방지 */
+  -webkit-touch-callout: none; /* iOS 롱프레스 방지 */
+  -webkit-user-select: none; /* 텍스트 선택 방지 */
+  user-select: none;
 }
 
 #creditVideo {
@@ -70,4 +74,98 @@ body {
   color: white;
   font-size: 24px;
   font-weight: bold;
+}
+
+/* 세로모드 안내 메시지 (기본 숨김) */
+#rotate-message {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.rotate-content {
+  text-align: center;
+  color: white;
+  padding: 40px;
+}
+
+.rotate-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  animation: rotate-animation 2s ease-in-out infinite;
+}
+
+@keyframes rotate-animation {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+}
+
+.rotate-content h2 {
+  font-size: 28px;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.rotate-content p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* 모바일 세로모드 - 게임 숨기고 안내 메시지 표시 */
+@media (max-width: 850px) and (orientation: portrait) {
+  #game-container {
+    display: none;
+  }
+
+  #rotate-message {
+    display: flex;
+  }
+}
+
+/* 모바일 가로모드 - 게임 표시 */
+@media (orientation: landscape) and (max-width: 1200px) {
+  body {
+    padding: 0;
+    align-items: center;
+  }
+
+  #game-container {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+
+  #gameCanvas {
+    width: 100vw;
+    height: auto;
+    max-height: 100vh;
+  }
+
+  #rotate-message {
+    display: none;
+  }
+}
+
+/* PC 환경에서는 가로모드 스타일 적용 안 함 */
+@media (orientation: landscape) and (min-width: 1201px) {
+  #rotate-message {
+    display: none;
+  }
+}
+
+/* PC 환경 (가로 큰 화면) */
+@media (min-width: 851px) {
+  #rotate-message {
+    display: none;
+  }
 }

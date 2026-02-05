@@ -110,8 +110,41 @@ class Renderer {
 
   // 플레이어 그리기 (최종 레벨인 경우 특별 표시)
   drawPlayer(player, isHoinLevel = false, godMode = false) {
-    // 무적 모드일 때 깜빡임 효과
-    if (godMode) {
+    const isUltimateActive = player.ultimateActive;
+
+    // 필살기 활성화 시 번쩍번쩍 빛나는 효과
+    if (isUltimateActive) {
+      const time = Date.now();
+      const fastPulse = Math.sin(time / 100) * 0.3 + 0.7; // 빠른 깜빡임
+      const slowPulse = Math.sin(time / 300) * 0.5 + 0.5; // 느린 깜빡임
+
+      // 여러 겹의 후광 효과 (바깥쪽부터)
+      for (let i = 4; i >= 1; i--) {
+        const glowRadius = player.radius + (i * 15);
+        const alpha = (fastPulse * 0.3) / i;
+
+        this.ctx.beginPath();
+        this.ctx.arc(player.x, player.y, glowRadius, 0, Math.PI * 2);
+        this.ctx.strokeStyle = `rgba(255, 215, 0, ${alpha})`;
+        this.ctx.lineWidth = 8;
+        this.ctx.stroke();
+
+        // 추가로 흰색 후광
+        this.ctx.beginPath();
+        this.ctx.arc(player.x, player.y, glowRadius - 5, 0, Math.PI * 2);
+        this.ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+        this.ctx.lineWidth = 4;
+        this.ctx.stroke();
+      }
+
+      // 발광 효과 설정
+      this.ctx.shadowBlur = 30;
+      this.ctx.shadowColor = 'rgba(255, 215, 0, ' + slowPulse + ')';
+
+      // 깜빡임 효과
+      this.ctx.globalAlpha = 0.8 + (fastPulse * 0.2);
+    } else if (godMode) {
+      // 무적 모드일 때 깜빡임 효과
       const pulse = Math.sin(Date.now() / 100) * 0.3 + 0.7;
       this.ctx.globalAlpha = pulse;
     }
@@ -136,8 +169,8 @@ class Renderer {
           player.x,
           player.y,
           player.radius,
-          godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
-          godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+          isUltimateActive ? '#FFD700' : godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
+          isUltimateActive ? 'rgba(255, 255, 255, 0.9)' : godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
           3
         );
       }
@@ -147,10 +180,33 @@ class Renderer {
         player.x,
         player.y,
         player.radius,
-        godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
-        godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+        isUltimateActive ? '#FFD700' : godMode ? '#FFD700' : CONFIG.PLAYER_COLOR,
+        isUltimateActive ? 'rgba(255, 255, 255, 0.9)' : godMode ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 255, 255, 0.6)',
         3
       );
+    }
+
+    // 그림자 효과 리셋
+    this.ctx.shadowBlur = 0;
+    this.ctx.shadowColor = 'transparent';
+
+    // 필살기 활성화 시 반짝이는 별 효과 추가
+    if (isUltimateActive) {
+      const time = Date.now();
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2 + (time / 500);
+        const distance = player.radius + 20 + Math.sin(time / 200 + i) * 10;
+        const starX = player.x + Math.cos(angle) * distance;
+        const starY = player.y + Math.sin(angle) * distance;
+        const starSize = 3 + Math.sin(time / 150 + i) * 2;
+        const starAlpha = Math.sin(time / 100 + i) * 0.5 + 0.5;
+
+        // 별 그리기
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${starAlpha})`;
+        this.ctx.beginPath();
+        this.ctx.arc(starX, starY, starSize, 0, Math.PI * 2);
+        this.ctx.fill();
+      }
     }
 
     // 최종 레벨인 경우 후광 효과
@@ -162,8 +218,8 @@ class Renderer {
       this.ctx.stroke();
     }
 
-    // 무적 모드일 때 외곽선 추가
-    if (godMode) {
+    // 무적 모드일 때 외곽선 추가 (필살기가 활성화되지 않은 경우만)
+    if (godMode && !isUltimateActive) {
       this.ctx.beginPath();
       this.ctx.arc(player.x, player.y, player.radius + 5, 0, Math.PI * 2);
       this.ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';

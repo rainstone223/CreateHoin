@@ -1,4 +1,4 @@
-// 키보드 입력 처리 (WASD)
+// 키보드 및 모바일 입력 처리
 class InputHandler {
   constructor(canvas) {
     this.canvas = canvas;
@@ -17,6 +17,9 @@ class InputHandler {
 
     // 필살기 활성화 콜백
     this.onUltimateActivate = null;
+
+    // 모바일 컨트롤 (나중에 설정됨)
+    this.mobileControls = null;
 
     // 키보드 이벤트 리스너
     window.addEventListener('keydown', (e) => {
@@ -46,22 +49,34 @@ class InputHandler {
     });
   }
 
+  // 모바일 컨트롤 설정
+  setMobileControls(mobileControls) {
+    this.mobileControls = mobileControls;
+  }
+
   // 이동 방향 벡터 반환
   getMovementDirection() {
     let dx = 0;
     let dy = 0;
 
-    // WASD 키
-    if (this.keys.w || this.keys.ArrowUp) dy -= 1;
-    if (this.keys.s || this.keys.ArrowDown) dy += 1;
-    if (this.keys.a || this.keys.ArrowLeft) dx -= 1;
-    if (this.keys.d || this.keys.ArrowRight) dx += 1;
+    // 모바일 컨트롤 우선
+    if (this.mobileControls && this.mobileControls.isMobile) {
+      const mobileDir = this.mobileControls.getMovementDirection();
+      dx = mobileDir.dx;
+      dy = mobileDir.dy;
+    } else {
+      // WASD 키
+      if (this.keys.w || this.keys.ArrowUp) dy -= 1;
+      if (this.keys.s || this.keys.ArrowDown) dy += 1;
+      if (this.keys.a || this.keys.ArrowLeft) dx -= 1;
+      if (this.keys.d || this.keys.ArrowRight) dx += 1;
 
-    // 대각선 이동 시 속도 정규화
-    if (dx !== 0 && dy !== 0) {
-      const length = Math.sqrt(dx * dx + dy * dy);
-      dx /= length;
-      dy /= length;
+      // 대각선 이동 시 속도 정규화
+      if (dx !== 0 && dy !== 0) {
+        const length = Math.sqrt(dx * dx + dy * dy);
+        dx /= length;
+        dy /= length;
+      }
     }
 
     return { dx, dy };

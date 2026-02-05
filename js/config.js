@@ -1,8 +1,9 @@
 // 게임 설정 상수
 const CONFIG = {
-  // 캔버스 설정
+  // 캔버스 설정 (모바일에서는 동적으로 변경됨)
   CANVAS_WIDTH: 800,
   CANVAS_HEIGHT: 600,
+  SIZE_SCALE: 1.0, // 개체 크기 스케일 팩터 (모바일에서 조정됨)
 
   // 게임 경계 (스폰 시 가장자리 패딩)
   BOUNDARY_PADDING: 50,
