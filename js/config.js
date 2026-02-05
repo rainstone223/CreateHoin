@@ -75,6 +75,6 @@ const CONFIG = {
     DOCUMENT_THROW_INTERVAL: 2000, // 2초마다 서류 던지기 (밀리초)
     DOCUMENT_SPEED: 3.5, // 서류 속도
     DOCUMENT_SIZE: 18, // 서류 크기 (사원 크기)
-    PREY_HIDE_BEHIND_PREDATOR_CHANCE: 0.2 // 먹이가 포식자 뒤로 숨을 확률 (20%)
+    PREY_HIDE_BEHIND_PREDATOR_CHANCE: 0.1 // 먹이가 포식자 뒤로 숨을 확률 (20%)
   }
 };

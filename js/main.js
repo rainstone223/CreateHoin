@@ -375,7 +375,7 @@ function setupDebugKeys() {
     game.canvas.addEventListener('touchstart', (e) => {
       if (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY) {
         e.preventDefault();
-        location.reload();
+        resetGame(); // 난이도 선택 화면으로
       }
     });
   }
@@ -384,7 +384,7 @@ function setupDebugKeys() {
   window.addEventListener('keydown', (e) => {
     // 게임 오버/승리 시 엔터키로 재시작
     if (e.key === 'Enter' && (game.state === CONFIG.STATE.GAMEOVER || game.state === CONFIG.STATE.VICTORY)) {
-      location.reload();
+      resetGame(); // 난이도 선택 화면으로
       return;
     }
 
@@ -409,7 +409,7 @@ function setupDebugKeys() {
         break;
 
       case 'r':
-        // 게임 리셋
+        // 게임 리셋 (완전 새로고침)
         location.reload();
         break;
     }
@@ -540,6 +540,33 @@ function playEndingCredit() {
   game.state = CONFIG.STATE.ENDING_CREDIT;
   showVideo(CONFIG.ENDING_CREDIT_VIDEO);
   console.log('엔딩 크레딧 재생 시작');
+}
+
+// 게임 재시작 (난이도 선택 화면으로)
+function resetGame() {
+  // 게임 상태 초기화
+  game.state = 'DIFFICULTY_SELECT';
+  game.selectedDifficulty = 0;
+  game.difficultyScreenEnterTime = Date.now();
+  game.startTime = null;
+  game.elapsedTime = 0;
+  game.godMode = false;
+  game.victoryAnimationStartTime = null;
+
+  // 레벨 시스템 초기화
+  game.levelSystem = new LevelSystem();
+
+  // 플레이어 초기화
+  game.player = new Player(
+    CONFIG.CANVAS_WIDTH / 2,
+    CONFIG.CANVAS_HEIGHT / 2,
+    game.levelSystem
+  );
+
+  // 개체 관리자 초기화
+  game.entityManager = new EntityManager();
+
+  console.log('게임 재시작: 난이도 선택 화면으로 이동');
 }
 
 // 게임 시작
